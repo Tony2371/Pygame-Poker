@@ -76,7 +76,7 @@ class Player(object):
             else:
                 return 0
    
-    def straight_flush_eval(self, board, suits):
+        def straight_flush_eval(self, board, suits):
         test = []
         if self.straight_eval(board) != 0 and 5 in [suits.count(x) for x in suits]:
             main_suit = [x for x in suits if suits.count(x)>=5][0]            
@@ -91,7 +91,24 @@ class Player(object):
                 test.append(1)            
             if suits[board.index(high_card-4)] == main_suit or suits[::-1][board[::-1].index(high_card-4)] == main_suit:
                 test.append(1)            
-        return sum(test)
+            return sum(test)
+
+    def low_straight_flush_eval(self, board, suits):
+        test = []
+        if 5 in [suits.count(x) for x in suits] and sum([1 for x in set(self.val_list) if x in [2,3,4,5,14]]) == 5:
+            main_suit = [x for x in suits if suits.count(x) >= 5][0]
+            high_card = 5
+            if suits[board.index(high_card)] == main_suit or suits[::-1][board[::-1].index(high_card)] == main_suit:
+                test.append(1)
+            if suits[board.index(high_card-1)] == main_suit or suits[::-1][board[::-1].index(high_card-1)] == main_suit:
+                test.append(1)
+            if suits[board.index(high_card-2)] == main_suit or suits[::-1][board[::-1].index(high_card-2)] == main_suit:
+                test.append(1)
+            if suits[board.index(high_card-3)] == main_suit or suits[::-1][board[::-1].index(high_card-3)] == main_suit:
+                test.append(1)
+            if suits[board.index(14)] == main_suit or suits[::-1][board[::-1].index(14)] == main_suit:
+                test.append(1)
+            return sum(test)
 
     def evaluate(self, board):
         self.val_list = [x.value for x in self.hand]+[x.value for x in board]
@@ -99,14 +116,15 @@ class Player(object):
         self.suit_list = [x.suit for x in self.hand]+[x.suit for x in board]
         self.suit_count_list = [self.suit_list.count(x) for x in self.suit_list]
 
-            #9 - Straigh flush
+            #9 - Straight flush
         if self.straight_flush_eval(self.val_list, self.suit_list) == 5:
             self.combination[0] = 9
             self.combination[1] = self.straight_eval(self.val_list)
 
             #9.1 - Low straight flush
-        elif False:
-            pass           
+        elif self.low_straight_flush_eval(self.val_list, self.suit_list) == 5:
+            self.combination[0] = 9
+            self.combination[1] = 5           
                   
             #8 - Four of a kind
         elif 4 in self.count_list:
