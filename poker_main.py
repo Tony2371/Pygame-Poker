@@ -76,7 +76,7 @@ class Player(object):
             else:
                 return 0
    
-        def straight_flush_eval(self, board, suits):
+    def straight_flush_eval(self, board, suits):
         test = []
         if self.straight_eval(board) != 0 and 5 in [suits.count(x) for x in suits]:
             main_suit = [x for x in suits if suits.count(x)>=5][0]            
@@ -158,10 +158,10 @@ class Player(object):
             self.combination[0] = 4
             self.combination[1] = self.val_list[self.count_list.index(3)]
             self.kicker[0] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-1]
-            self.kicker[1] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-2]
+            #self.kicker[1] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-2]
       
             #3 - Two Pairs
-        elif len(set(self.val_list)) <= 5:            
+        elif self.count_list.count(2) >= 4:            
             self.combination[0] = 3
             self.combination[1] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 2])[-1]
             self.combination[2] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 2])[-3]
@@ -182,3 +182,12 @@ class Player(object):
             self.kicker[0] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-1]
             self.kicker[1] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-2]
             self.kicker[2] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-3]
+
+    def bet(self, bet_amount):
+        self.chip_amount = self.chip_amount-bet_amount
+        return bet_amount
+   
+class StandardBoard(list):
+    def __init__(self):
+        self.bank = 0
+
