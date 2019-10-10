@@ -139,7 +139,7 @@ class Player(object):
             self.combination[2] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 2 or y == 3])[0]
            
             #6 - Flush
-        elif 5 in [self.suit_list.count(x) for x in self.suit_list]:
+        elif 5 in [self.suit_list.count(x) for x in self.suit_list] or 6 in [self.suit_list.count(x) for x in self.suit_list] or 7 in [self.suit_list.count(x) for x in self.suit_list]:
             self.combination[0] = 6
             self.combination[1] = max([x for x,y in zip(self.val_list,self.suit_count_list) if y >= 5])
            
