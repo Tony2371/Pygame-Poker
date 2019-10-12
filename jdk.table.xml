@@ -1,0 +1,181 @@
+<application>
+  <component name="ProjectJdkTable">
+    <jdk version="2">
+      <name value="Python 3.6" />
+      <type value="Python SDK" />
+      <version value="Python 3.6.6" />
+      <homePath value="C:\Program Files (x86)\Microsoft Visual Studio\Shared\Python36_64\python.exe" />
+      <roots>
+        <classPath>
+          <root type="composite">
+            <root url="file://C:/Program Files (x86)/Microsoft Visual Studio/Shared/Python36_64/DLLs" type="simple" />
+            <root url="file://C:/Program Files (x86)/Microsoft Visual Studio/Shared/Python36_64/Lib" type="simple" />
+            <root url="file://C:/Program Files (x86)/Microsoft Visual Studio/Shared/Python36_64" type="simple" />
+            <root url="file://C:/Program Files (x86)/Microsoft Visual Studio/Shared/Python36_64/Lib/site-packages" type="simple" />
+            <root url="file://$USER_HOME$/.PyCharmCE2018.2/system/python_stubs/907059903" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/python-skeletons" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/3.4" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/3" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/2and3" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/third_party/3" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/third_party/2and3" type="simple" />
+          </root>
+        </classPath>
+        <sourcePath>
+          <root type="composite" />
+        </sourcePath>
+      </roots>
+      <additional />
+    </jdk>
+    <jdk version="2">
+      <name value="Python 3.6 (TrulyCode)" />
+      <type value="Python SDK" />
+      <version value="Python 3.6.6" />
+      <homePath value="C:\Users\User\PycharmProjects\TrulyCode\venv\Scripts\python.exe" />
+      <roots>
+        <classPath>
+          <root type="composite">
+            <root url="file://C:/Program Files (x86)/Microsoft Visual Studio/Shared/Python36_64/DLLs" type="simple" />
+            <root url="file://C:/Program Files (x86)/Microsoft Visual Studio/Shared/Python36_64/Lib" type="simple" />
+            <root url="file://C:/Program Files (x86)/Microsoft Visual Studio/Shared/Python36_64" type="simple" />
+            <root url="file://$USER_HOME$/PycharmProjects/TrulyCode/venv" type="simple" />
+            <root url="file://$USER_HOME$/PycharmProjects/TrulyCode/venv/Lib/site-packages" type="simple" />
+            <root url="jar://$USER_HOME$/PycharmProjects/TrulyCode/venv/Lib/site-packages/setuptools-39.1.0-py3.6.egg!/" type="simple" />
+            <root url="file://$USER_HOME$/PycharmProjects/TrulyCode/venv/Lib/site-packages/pip-10.0.1-py3.6.egg" type="simple" />
+            <root url="file://$USER_HOME$/.PyCharmCE2018.2/system/python_stubs/-465607051" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/python-skeletons" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/3.4" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/3" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/2and3" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/third_party/3" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/third_party/2and3" type="simple" />
+          </root>
+        </classPath>
+        <sourcePath>
+          <root type="composite" />
+        </sourcePath>
+      </roots>
+      <additional ASSOCIATED_PROJECT_PATH="$USER_HOME$/PycharmProjects/TrulyCode" />
+    </jdk>
+    <jdk version="2">
+      <name value="Python 3.6 (Binance_ticker)" />
+      <type value="Python SDK" />
+      <version value="Python 3.6.6" />
+      <homePath value="C:\Users\User\PycharmProjects\Binance_ticker\venv\Scripts\python.exe" />
+      <roots>
+        <classPath>
+          <root type="composite">
+            <root url="file://C:/Program Files (x86)/Microsoft Visual Studio/Shared/Python36_64/DLLs" type="simple" />
+            <root url="file://C:/Program Files (x86)/Microsoft Visual Studio/Shared/Python36_64/Lib" type="simple" />
+            <root url="file://C:/Program Files (x86)/Microsoft Visual Studio/Shared/Python36_64" type="simple" />
+            <root url="file://$USER_HOME$/PycharmProjects/Binance_ticker/venv" type="simple" />
+            <root url="file://$USER_HOME$/PycharmProjects/Binance_ticker/venv/Lib/site-packages" type="simple" />
+            <root url="jar://$USER_HOME$/PycharmProjects/Binance_ticker/venv/Lib/site-packages/setuptools-39.1.0-py3.6.egg!/" type="simple" />
+            <root url="file://$USER_HOME$/PycharmProjects/Binance_ticker/venv/Lib/site-packages/pip-10.0.1-py3.6.egg" type="simple" />
+            <root url="file://$USER_HOME$/.PyCharmCE2018.2/system/python_stubs/-601241137" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/python-skeletons" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/3.4" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/3" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/2and3" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/third_party/3" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/third_party/2and3" type="simple" />
+          </root>
+        </classPath>
+        <sourcePath>
+          <root type="composite" />
+        </sourcePath>
+      </roots>
+      <additional ASSOCIATED_PROJECT_PATH="$USER_HOME$/PycharmProjects/Binance_ticker" />
+    </jdk>
+    <jdk version="2">
+      <name value="Python 3.6 (Different_stuff)" />
+      <type value="Python SDK" />
+      <version value="Python 3.6.6" />
+      <homePath value="C:\Users\User\PycharmProjects\Different_stuff\venv\Scripts\python.exe" />
+      <roots>
+        <classPath>
+          <root type="composite">
+            <root url="file://C:/Program Files (x86)/Microsoft Visual Studio/Shared/Python36_64/DLLs" type="simple" />
+            <root url="file://C:/Program Files (x86)/Microsoft Visual Studio/Shared/Python36_64/Lib" type="simple" />
+            <root url="file://C:/Program Files (x86)/Microsoft Visual Studio/Shared/Python36_64" type="simple" />
+            <root url="file://$USER_HOME$/PycharmProjects/Different_stuff/venv" type="simple" />
+            <root url="file://$USER_HOME$/PycharmProjects/Different_stuff/venv/Lib/site-packages" type="simple" />
+            <root url="jar://$USER_HOME$/PycharmProjects/Different_stuff/venv/Lib/site-packages/setuptools-39.1.0-py3.6.egg!/" type="simple" />
+            <root url="file://$USER_HOME$/PycharmProjects/Different_stuff/venv/Lib/site-packages/pip-10.0.1-py3.6.egg" type="simple" />
+            <root url="file://$USER_HOME$/.PyCharmCE2018.2/system/python_stubs/-710462126" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/python-skeletons" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/3.4" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/3" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/2and3" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/third_party/3" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/third_party/2and3" type="simple" />
+          </root>
+        </classPath>
+        <sourcePath>
+          <root type="composite" />
+        </sourcePath>
+      </roots>
+      <additional ASSOCIATED_PROJECT_PATH="$USER_HOME$/PycharmProjects/Different_stuff" />
+    </jdk>
+    <jdk version="2">
+      <name value="Python 3.6 (Flask_exerscises)" />
+      <type value="Python SDK" />
+      <version value="Python 3.6.6" />
+      <homePath value="C:\Users\User\PycharmProjects\Flask_exerscises\venv\Scripts\python.exe" />
+      <roots>
+        <classPath>
+          <root type="composite">
+            <root url="file://C:/Program Files (x86)/Microsoft Visual Studio/Shared/Python36_64/DLLs" type="simple" />
+            <root url="file://C:/Program Files (x86)/Microsoft Visual Studio/Shared/Python36_64/Lib" type="simple" />
+            <root url="file://C:/Program Files (x86)/Microsoft Visual Studio/Shared/Python36_64" type="simple" />
+            <root url="file://$USER_HOME$/PycharmProjects/Flask_exerscises/venv" type="simple" />
+            <root url="file://$USER_HOME$/PycharmProjects/Flask_exerscises/venv/Lib/site-packages" type="simple" />
+            <root url="jar://$USER_HOME$/PycharmProjects/Flask_exerscises/venv/Lib/site-packages/setuptools-39.1.0-py3.6.egg!/" type="simple" />
+            <root url="file://$USER_HOME$/PycharmProjects/Flask_exerscises/venv/Lib/site-packages/pip-10.0.1-py3.6.egg" type="simple" />
+            <root url="file://$USER_HOME$/.PyCharmCE2018.2/system/python_stubs/-1487453872" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/python-skeletons" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/3.4" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/3" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/2and3" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/third_party/3" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/third_party/2and3" type="simple" />
+          </root>
+        </classPath>
+        <sourcePath>
+          <root type="composite" />
+        </sourcePath>
+      </roots>
+      <additional ASSOCIATED_PROJECT_PATH="$USER_HOME$/PycharmProjects/Flask_exerscises" />
+    </jdk>
+    <jdk version="2">
+      <name value="Python 3.6 (Poker_face)" />
+      <type value="Python SDK" />
+      <version value="Python 3.6.6" />
+      <homePath value="C:\Users\User\PycharmProjects\Poker_face\venv\Scripts\python.exe" />
+      <roots>
+        <classPath>
+          <root type="composite">
+            <root url="file://C:/Program Files (x86)/Microsoft Visual Studio/Shared/Python36_64/DLLs" type="simple" />
+            <root url="file://C:/Program Files (x86)/Microsoft Visual Studio/Shared/Python36_64/Lib" type="simple" />
+            <root url="file://C:/Program Files (x86)/Microsoft Visual Studio/Shared/Python36_64" type="simple" />
+            <root url="file://$USER_HOME$/PycharmProjects/Poker_face/venv" type="simple" />
+            <root url="file://$USER_HOME$/PycharmProjects/Poker_face/venv/Lib/site-packages" type="simple" />
+            <root url="jar://$USER_HOME$/PycharmProjects/Poker_face/venv/Lib/site-packages/setuptools-39.1.0-py3.6.egg!/" type="simple" />
+            <root url="file://$USER_HOME$/PycharmProjects/Poker_face/venv/Lib/site-packages/pip-10.0.1-py3.6.egg" type="simple" />
+            <root url="file://$USER_HOME$/.PyCharmCE2018.2/system/python_stubs/-1572278753" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/python-skeletons" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/3.4" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/3" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/2and3" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/third_party/3" type="simple" />
+            <root url="file://$APPLICATION_HOME_DIR$/helpers/typeshed/third_party/2and3" type="simple" />
+          </root>
+        </classPath>
+        <sourcePath>
+          <root type="composite" />
+        </sourcePath>
+      </roots>
+      <additional ASSOCIATED_PROJECT_PATH="$USER_HOME$/PycharmProjects/Poker_face" />
+    </jdk>
+  </component>
+</application>
