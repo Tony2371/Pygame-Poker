@@ -7,7 +7,7 @@ class Card(object):
         self.value = value
         self.suit = suit
         self.name = name
-        self.showing = True
+        self.showing = False
     def __repr__(self):
         if self.showing and self.value <=10:
             return str(self.value)+" of "+self.suit
@@ -54,6 +54,7 @@ class Player(object):
         self.count_list = []
         self.suit_list = []
         self.chip_amount = 1000
+        self.current_bet = 0
 
         self.combination = [0,0,0]
         # combination takes 3 arguments
@@ -184,10 +185,21 @@ class Player(object):
             self.kicker[2] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-3]
 
     def bet(self, bet_amount):
-        self.chip_amount = self.chip_amount-bet_amount
+        self.chip_amount -= bet_amount
+        self.current_bet += bet_amount
         return bet_amount
    
 class StandardBoard(list):
     def __init__(self):
         self.bank = 0
+        self.game_round = -1
+
+    def blind_bet(self, players, big_blind):
+        bb = players[0]
+        sb = players[1]
+        self.bank += bb.bet(big_blind)
+        self.bank += sb.bet(big_blind//2)
+        print(players[0], "bet", big_blind, "chips as Big Blind")
+        print(players[1], "bet", big_blind//2, "chips as Small Blind")
+
 
