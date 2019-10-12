@@ -2,7 +2,7 @@
 TO DO LIST:
 - Low Straight flush combination (SOLVED)
 - Kickers
-- Second hgh card for Two pairs and Full House
+- Second high card for Two pairs and Full House
 
 KNOWN BUGS:
 - max([x for x,y in zip(self.val_list,self.count_list) if y == 1])
@@ -11,27 +11,51 @@ will be empty sequence if none of y == 1
 '''
 from poker_main import Card, Player, StandardDeck, StandardBoard
 from random import randint
+from time import sleep
+
+comb_names = {
+	1:"High Card",
+	2:"Pair",
+	3:"Two pairs",
+	4:"Three of a kind",
+	5:"Straight",
+	6:"Flush",
+	7:"Full house",
+	8:"Four of a kind",
+	9:"Straight flush"}
 
 deck = StandardDeck()
 board = StandardBoard()
 player1 = Player("One")
-player2 = Player("Two")
+you = Player("You")
+player3 = Player("Three")
+player4 = Player("Four")
 
-deck.shuffle()
+players_in_game = [you, player1]
+run = True
+bb_list = [20,50,100,200,400,800]
+bb = bb_list[0]
 
-player1.hand.append(deck.pop(randint(0, len(deck)-1)))
-player1.hand.append(deck.pop(randint(0, len(deck)-1)))
-player2.hand.append(deck.pop(randint(0, len(deck)-1)))
-player2.hand.append(deck.pop(randint(0, len(deck)-1)))
+while run:
+	board.game_round += 1
+	if board.game_round%5 == 0:
+		bb = bb_list[board.game_round//5]
+	players_in_game.append(players_in_game.pop(0))	
+	board.blind_bet(players_in_game,bb)
+
+	deck.shuffle()
+	for x in players_in_game:
+		[x.hand.append(deck.pop(0)) for y in range(2)]
+		if x == you:
+			for y in x.hand:
+				y.showing = True
+		print("{0}'s hand: {1}".format(x, x.hand))
+
+		
+	break
+
+	
 
 
-[board.append(deck.pop(randint(0, len(deck)-1))) for x in range(5)]
 
-print("Player1: ",player1.hand)
-print("Player2: ",player2.hand)
-print(board)
-player1.evaluate(board)
-player2.evaluate(board)
-print("-------------------------")
-print(player1.combination,player1.kicker)
-print(player2.combination,player2.kicker)
+
