@@ -199,7 +199,5 @@ class StandardBoard(list):
         sb = players[1]
         self.bank += bb.bet(big_blind)
         self.bank += sb.bet(big_blind//2)
-        print(players[0], "bet", big_blind, "chips as Big Blind")
-        print(players[1], "bet", big_blind//2, "chips as Small Blind")
 
 
