@@ -184,10 +184,31 @@ class Player(object):
             self.kicker[1] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-2]
             self.kicker[2] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-3]
 
-    def bet(self, bet_amount):
+    def bet(self, bet_amount, board):
         self.chip_amount -= bet_amount
         self.current_bet += bet_amount
-        return bet_amount
+        board.bank += bet_amount
+
+    # input is a number where:
+    # N = (max(all current bets)-you.current bet)
+    # 0 - fold
+    # 1 - bet 0 (check)
+    # 2 - bet N (call)
+    # 3 - bet > N (raise)
+    def decision(self, action,players,board):
+        if action == "fold":
+            self.hand = None
+            print(self,"folded")
+        elif action == "call":
+            print(self,"calls for {0} chips".format(max(x.current_bet for x in players)-self.current_bet))
+            self.bet(max(x.current_bet for x in players)-self.current_bet,board)
+        elif action == "raise":
+            raise_amount = int(input("Raise for:"))
+            self.bet(raise_amount,board)
+            print(self,"raises for {0} chips".format(raise_amount))
+        else:
+            print("Enter valid action!")
+
    
 class StandardBoard(list):
     def __init__(self):
@@ -197,7 +218,7 @@ class StandardBoard(list):
     def blind_bet(self, players, big_blind):
         bb = players[0]
         sb = players[1]
-        self.bank += bb.bet(big_blind)
-        self.bank += sb.bet(big_blind//2)
+        bb.bet(big_blind,self)
+        sb.bet(big_blind//2,self)
 
 
