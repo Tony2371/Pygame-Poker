@@ -8,6 +8,26 @@ KNOWN BUGS:
 - max([x for x,y in zip(self.val_list,self.count_list) if y == 1])
 will be empty sequence if none of y == 1
 - Full house error if two sets
+
+GAME STAGES:
+- shuffle deck
+- deal cards
+- bet blinds
+	- reset current_bets
+- deal flop
+- make bets
+	- reset current_bets
+- deal turn
+- make bets
+	- reset current_bets
+- deal river
+- make bets
+	- reset current_bets
+- evaluate hands
+- determine winner and prize
+- reset hands
+- reset board
+- reset deck
 '''
 from poker_main import Card, Player, StandardDeck, StandardBoard
 from random import randint
@@ -31,29 +51,44 @@ you = Player("You")
 player3 = Player("Three")
 player4 = Player("Four")
 
-players_in_game = [you, player1, player3,player4]
+players_in_game = [you, player1]
+players_in_round = []
 run = True
 bb_list = [20,50,100,200,400,800]
 bb = bb_list[0]
 
+
 while run:
+	
     board.game_round += 1
+    print([x.chip_amount for x in players_in_game])
+
     if board.game_round%5 == 0:
         bb = bb_list[board.game_round//5]
     players_in_game.append(players_in_game.pop(0))
-    board.blind_bet(players_in_game,bb)
+    board.blind_bet(players_in_game,bb)   
 
+    # PreFlop
     deck.shuffle()
 
     for x in players_in_game:
-        [x.hand.append(deck.pop(0)) for y in range(2)]
-        if x == you:
-            for y in x.hand:
-                y.showing = True
-        print("{0}'s hand: {1}".format(x, x.hand))
+    	x.hand.append(deck.pop(0))
+    	x.hand.append(deck.pop(0))
+    	for l in x.hand:
+    		l.showing = True
 
-    print(board.bank)
-    print("You need to bet {0} to continue".format(max([x.current_bet for x in players_in_game])-int(you.current_bet)))
+    for x in players_in_game:
+    	print(x,x.hand)
+
+    print("Blinds:")
+    for x in players_in_game:
+    	print(x,x.current_bet)
+
+    for x in players_in_game:
+    	if x.current_bet < max([x.current_bet for x in players_in_game]):
+    		print("{0} needs to bet {1} to continue".format(x,max([x.current_bet for x in players_in_game])-x.current_bet))
+
+    you.decision(input("Decision:"),players_in_game,board)
     break
 
 	
