@@ -24,47 +24,52 @@ bb = bb_list[0]
 
 # Draw variables
 gap = 10
-player_surface = pygame.Surface(((128//3*2+gap*3)*2, 250))
+gap_x = -228*3
 hand_card_1 = pygame.transform.scale(pygame.image.load('deck_images/14s.jpg'), (128//3, 178//3))
 hand_card_2 = pygame.transform.scale(pygame.image.load('deck_images/14h.jpg'), (128//3, 178//3))
-
+windows_spawned = 0
 while running:
-    # ---------- Game logic block ----------
-    # Shuffle deck
-    if not deck.shuffled:
-        deck.shuffle()
+	# ---------- Game logic block ----------
+	# Shuffle deck
+	if not deck.shuffled:
+		deck.shuffle()
 
-    # Deal cards to players
-    if len(player_1.hand) < 2:
-        for x in players_in_game:
-            x.hand.append(deck.pop(0))
-            x.hand.append(deck.pop(0))
-        for x in players_in_game:
-            for card in x.hand:
-                card.showing = True
-    # Bet blinds
+	# Deal cards to players
+	if len(player_1.hand) < 2:
+		for x in players_in_game:
+			x.hand.append(deck.pop(0))
+			x.hand.append(deck.pop(0))
+		for x in players_in_game:
+			for card in x.hand:
+				card.showing = True
+	# Bet blinds
+	
+	# ---------- GUI block ----------
+	while windows_spawned <= 2:
+		for player in players_in_game:
+			windows_spawned += 1
+			gap_x += player.surface.get_width()
+			player.draw_card()
 
-    # ---------- GUI block ----------
-    for player in players_in_game:
-        window.blit(player_surface, (gap, gap))
-        pygame.draw.rect(player_surface, (255, 255, 255), player_surface.get_rect(), 3)
-        player_surface.blit(hand_card_1, (gap, gap))
-        player_surface.blit(hand_card_2, (gap * 2 + 128 // 3, gap))
+			window.blit(player.surface, (10+gap_x, gap))
+			pygame.draw.rect(player.surface, (255, 255, 255), player.surface.get_rect(), 3)
+			player.surface.blit(player.card_1, (gap, gap))
+			player.surface.blit(player.card_2, (gap * 2 + 128 // 3, gap))
 
-        f1 = pygame.font.Font(None, 23)
-        line_1 = f1.render(str(player), 0, (255, 255, 255))
-        line_2 = f1.render("Chips amount: {0}".format(player.chip_amount), 0, (255, 255, 255))
-        line_3 = f1.render("Bet N chips to continue!", 0, (255, 255, 255))
+			f1 = pygame.font.Font(None, 23)
+			line_1 = f1.render(str(player), 0, (255, 255, 255))
+			line_2 = f1.render("Chips amount: {0}".format(player.chip_amount), 0, (255, 255, 255))
+			line_3 = f1.render("Bet N chips to continue!", 0, (255, 255, 255))
 
-        player_surface.blit(line_1, (gap, gap * 2 + 178 // 3))
-        player_surface.blit(line_2, (gap, gap * 4 + 178 // 3))
-        player_surface.blit(line_3, (gap, gap * 6 + 178 // 3))
+			player.surface.blit(line_1, (gap, gap * 2 + 178 // 3))
+			player.surface.blit(line_2, (gap, gap * 4 + 178 // 3))
+			player.surface.blit(line_3, (gap, gap * 6 + 178 // 3))	
+		
+		pygame.display.update()
 
-        pygame.display.update()
-
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-    clock.tick(30)
+	for event in pygame.event.get():
+		if event.type == pygame.QUIT:
+			running = False
+	clock.tick(30)
 
 pygame.quit()
