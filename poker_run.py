@@ -10,28 +10,9 @@ will be empty sequence if none of y == 1
 - Full house error if two sets
 
 GAME STAGES:
-- shuffle deck
-- deal cards
-- bet blinds
-	- reset current_bets
-- deal flop
-- make bets
-	- reset current_bets
-- deal turn
-- make bets
-	- reset current_bets
-- deal river
-- make bets
-	- reset current_bets
-- evaluate hands
-- determine winner and prize
-- reset hands
-- reset board
-- reset deck
+
 '''
-from poker_main import Card, Player, StandardDeck, StandardBoard
-from random import randint
-from time import sleep
+from poker_main import Player, StandardDeck, StandardBoard
 
 comb_names = {
 	1:"High Card",
@@ -66,7 +47,7 @@ while run:
     if board.game_round%5 == 0:
         bb = bb_list[board.game_round//5]
     players_in_game.append(players_in_game.pop(0))
-    board.blind_bet(players_in_game,bb)   
+    board.blind_bet(players_in_game, bb)
 
     # PreFlop
     deck.shuffle()
