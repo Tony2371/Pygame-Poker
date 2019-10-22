@@ -1,6 +1,8 @@
 from random import shuffle
 from operator import itemgetter
 from itertools import groupby
+import pygame
+
 
 class Card(object):
     def __init__(self, name, value, suit):
@@ -16,8 +18,10 @@ class Card(object):
         else:
             return "Card"
 
+
 class StandardDeck(list):
     def __init__(self):
+        self.shuffled = False
         suits = ["\u2660", "\u2665", "\u2666", "\u2663"]
         values = {
         	    "Two":2,
@@ -41,10 +45,9 @@ class StandardDeck(list):
         return "{0} cards remaining in deck".format(len(self))
     
     def shuffle(self):
-        shuffle(self)
-        shuffle(self)
-        shuffle(self)
+        [shuffle(self) for x in range(71)]
         print("Deck shuffled")
+        self.shuffled = True
 
 class Player(object):   
     def __init__(self, name):
