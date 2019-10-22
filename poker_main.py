@@ -22,7 +22,8 @@ class Card(object):
 class StandardDeck(list):
     def __init__(self):
         self.shuffled = False
-        suits = ["\u2660", "\u2665", "\u2666", "\u2663"]
+        suits = ["s","h","d","c"]
+        #suits = ["\u2660", "\u2665", "\u2666", "\u2663"]
         values = {
         	    "Two":2,
         	    "Three":3,
@@ -65,6 +66,16 @@ class Player(object):
         # second - highest card value in combination
         # third - second high card (for two pairs and Full house)
         self.kicker = [0,0,0]
+
+        # GUI variables
+        self.surface = pygame.Surface((228, 250))
+
+    def draw_card(self):
+        self.card_1 = pygame.transform.scale(pygame.image.load("deck_images/{0}{1}.jpg".format(self.hand[0].value,self.hand[0].suit)),(128//3, 178//3))
+        self.card_2 = pygame.transform.scale(pygame.image.load("deck_images/{0}{1}.jpg".format(self.hand[1].value,self.hand[1].suit)),(128//3, 178//3))
+
+    
+
 
     def __repr__(self):
         return str("Player "+self.name)
