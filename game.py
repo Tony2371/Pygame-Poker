@@ -40,36 +40,40 @@ while running:
 			x.hand.append(deck.pop(0))
 			x.hand.append(deck.pop(0))
 		for x in players_in_game:
-			for card in x.hand:
-				card.showing = True
+			#if x == player_1:
+				for card in x.hand:
+					card.showing = True
 	# Bet blinds
+	bb_list = [20,50,100,200,400,800]
+	bb = bb_list[0]	
+	while board.bank < bb+bb//2:
+		board.blind_bet(players_in_game, bb)
 	
+	while len(board) < 5:
+		for x in range(5):
+			board.append(deck.pop(0))
+		for x in board:
+			x.showing = True
+
+
 	# ---------- GUI block ----------
 	while windows_spawned <= 2:
 		for player in players_in_game:
 			windows_spawned += 1
-			gap_x += player.surface.get_width()
-			player.draw_card()
+			gap_x += player.surface.get_width()+45
 
-			window.blit(player.surface, (10+gap_x, gap))
-			pygame.draw.rect(player.surface, (255, 255, 255), player.surface.get_rect(), 3)
-			player.surface.blit(player.card_1, (gap, gap))
-			player.surface.blit(player.card_2, (gap * 2 + 128 // 3, gap))
+			player.draw_player_surface(window, gap_x, players_in_game)
 
-			f1 = pygame.font.Font(None, 23)
-			line_1 = f1.render(str(player), 0, (255, 255, 255))
-			line_2 = f1.render("Chips amount: {0}".format(player.chip_amount), 0, (255, 255, 255))
-			line_3 = f1.render("Bet N chips to continue!", 0, (255, 255, 255))
 
-			player.surface.blit(line_1, (gap, gap * 2 + 178 // 3))
-			player.surface.blit(line_2, (gap, gap * 4 + 178 // 3))
-			player.surface.blit(line_3, (gap, gap * 6 + 178 // 3))	
+	board.draw_board_surface(window)
+
 		
-		pygame.display.update()
+	pygame.display.update()
+
 
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			running = False
-	clock.tick(30)
+	clock.tick(15)
 
 pygame.quit()
