@@ -10,6 +10,7 @@ class Card(object):
         self.suit = suit
         self.name = name
         self.showing = False
+        
     def __repr__(self):
         if self.showing and self.value <=10:
             return str(self.value)+" of "+self.suit
@@ -17,6 +18,18 @@ class Card(object):
             return str(self.name)+" of "+self.suit
         else:
             return "Card"
+
+    #---------- GUI functions ----------
+    def draw_card(self):
+        if self.showing:
+            self.card_image = pygame.transform.scale(pygame.image.load("deck_images/{0}{1}.jpg".format(self.value,self.suit)),(128//3, 178//3))
+            return self.card_image
+        else:
+            self.card_image = pygame.transform.scale(pygame.image.load("deck_images/back.jpg"),(128//3, 178//3))
+            return self.card_image
+       
+
+
 
 
 class StandardDeck(list):
@@ -67,14 +80,29 @@ class Player(object):
         # third - second high card (for two pairs and Full house)
         self.kicker = [0,0,0]
 
-        # GUI variables
+        # GUI variables and functions
         self.surface = pygame.Surface((228, 250))
 
-    def draw_card(self):
-        self.card_1 = pygame.transform.scale(pygame.image.load("deck_images/{0}{1}.jpg".format(self.hand[0].value,self.hand[0].suit)),(128//3, 178//3))
-        self.card_2 = pygame.transform.scale(pygame.image.load("deck_images/{0}{1}.jpg".format(self.hand[1].value,self.hand[1].suit)),(128//3, 178//3))
+    def draw_player_surface(self, main_window, x_position, players_list):
+        main_window.blit(self.surface,(10+x_position,10))
+        self.surface.fill((50,50,50))
+        pygame.draw.rect(self.surface, (255, 255, 255), self.surface.get_rect(), 3)
+        self.surface.blit(self.hand[0].draw_card(), (10, 10))
+        self.surface.blit(self.hand[1].draw_card(), (20 + 128 // 3, 10))
 
-    
+        f1 = pygame.font.Font(None, 25)
+        line_1 = f1.render(str(self.name), 0, (255, 255, 255))
+        line_2 = f1.render("Chips amount: {0}".format(self.chip_amount), 0, (255, 255, 255))
+        line_3 = f1.render("Bet {0} chips to continue!".format(max([l.current_bet for l in players_list])-self.current_bet), 0, (255, 255, 255))
+        line_4 = f1.render("Current bet:{0}".format(self.current_bet),0, (150,255,150))
+
+        self.surface.blit(line_1, (10, 10 * 2 + 178 // 3))
+        self.surface.blit(line_2, (10, 10 * 4 + 178 // 3))
+        self.surface.blit(line_3, (10, 10 * 6 + 178 // 3))
+        
+        self.surface.blit(line_4, (10,215))
+
+        pygame.draw.line(self.surface,(255,255,255),[0,self.surface.get_height()*0.8],[self.surface.get_width(),self.surface.get_height()*0.8],3)
 
 
     def __repr__(self):
@@ -222,12 +250,31 @@ class Player(object):
             print(self,"raises for {0} chips".format(raise_amount))
         else:
             print("Enter valid action!")
-
    
 class StandardBoard(list):
     def __init__(self):
         self.bank = 0
         self.game_round = -1
+
+        # GUI variables and functions
+        self.surface = pygame.Surface(((6*10)+(128//3*5),20+178//3+60))
+
+    def draw_board_surface(self, main_window):
+        main_window.blit(self.surface,((800-self.surface.get_width())//2,300))
+        self.surface.fill((15,45,45))
+        pygame.draw.rect(self.surface, (50, 50, 190), self.surface.get_rect(), 3)
+        self.surface.blit(self[0].draw_card(), (10, 70))
+        self.surface.blit(self[1].draw_card(), (20 + (128 // 3), 70))
+        self.surface.blit(self[2].draw_card(), (30 + 2*(128 // 3), 70))
+        self.surface.blit(self[3].draw_card(), (40 + 3*(128 // 3), 70))
+        self.surface.blit(self[4].draw_card(), (50 + 4*(128 // 3), 70))
+
+        f1 = pygame.font.Font(None, 35)
+        line_1 = f1.render("Current bank: {0}".format(self.bank), 0, (50, 215, 50))
+
+        self.surface.blit(line_1, ((self.surface.get_width()-line_1.get_width())//2,10))
+
+
 
     def blind_bet(self, players, big_blind):
         bb = players[0]
