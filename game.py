@@ -6,6 +6,8 @@ deck = StandardDeck()
 board = StandardBoard()
 player_1 = Player("One")
 player_2 = Player("Two")
+player_3 = Player("Three")
+player_4 = Player("Four")
 
 window_width = 800
 window_height = 600
@@ -18,16 +20,11 @@ suit_dic = {"\u2660": "s", "\u2665": "h", "\u2666": "d", "\u2663": "c"}
 running = True
 
 # Game variables
-players_in_game = [player_1, player_2]
+players_in_game = [player_1, player_2,player_3, player_4]
 bb_list = [20, 50, 100, 200, 400, 800]
 bb = bb_list[0]
 
 # Draw variables
-gap = 10
-gap_x = -228*3
-hand_card_1 = pygame.transform.scale(pygame.image.load('deck_images/14s.jpg'), (128//3, 178//3))
-hand_card_2 = pygame.transform.scale(pygame.image.load('deck_images/14h.jpg'), (128//3, 178//3))
-windows_spawned = 0
 while running:
 	# ---------- Game logic block ----------
 	# Shuffle deck
@@ -46,34 +43,75 @@ while running:
 	# Bet blinds
 	bb_list = [20,50,100,200,400,800]
 	bb = bb_list[0]	
-	while board.bank < bb+bb//2:
+	if board.bank < bb+bb//2:
 		board.blind_bet(players_in_game, bb)
-	
-	while len(board) < 5:
-		for x in range(5):
-			board.append(deck.pop(0))
+
+	#Player decisions
+	bets_not_done = True
+	if len(set([x.current_bet for x in players_in_game])) != 1:
+		for player in players_in_game:
+			if player.ingame:
+				print("{0} need to bet {1} chips to continue".format(player.name,max([x.current_bet for x in players_in_game])-player.current_bet))
+				player.decision(input("Decision:"),players_in_game,board)
+		if len(set([player.current_bet for player in players_in_game if player.ingame])) == 1:
+			bets_not_done = False
+
+
+
+	# Deal Flop
+	if len(board) < 3 and len(set([player.current_bet for player in players_in_game if player.ingame])) == 1:
+		board.append(deck.pop(0))
+		board.append(deck.pop(0))
+		board.append(deck.pop(0))
 		for x in board:
 			x.showing = True
+		board.street = "flop"
+		for x in players_in_game:
+			x.current_bet = 0
+
+	#Player decisions
+
+	#Deal Turn
+
+	#Player decisions
+
+	#Deal River
+
+	#Player decisions
+
+	#Combination comparison and winner selection
+
+	#Reset game state for new round
+
+	for player in players_in_game:
+		if player.ingame:
+			player.evaluate(board)
+
 
 
 	# ---------- GUI block ----------
-	while windows_spawned <= 2:
-		for player in players_in_game:
-			windows_spawned += 1
-			gap_x += player.surface.get_width()+45
-
-			player.draw_player_surface(window, gap_x, players_in_game)
+	player_1.draw_player_surface(window,(10,10),players_in_game)
+	player_2.draw_player_surface(window,(64.8+114,10), players_in_game)
+	player_3.draw_player_surface(window,(64.8*2+114*2,10), players_in_game)
+	player_4.draw_player_surface(window,(64.8*3+114*3,10), players_in_game)
 
 
 	board.draw_board_surface(window)
 
-		
-	pygame.display.update()
-
 
 	for event in pygame.event.get():
-		if event.type == pygame.QUIT:
+		if event.type == pygame.QUIT or len(board) > 5:
 			running = False
-	clock.tick(15)
+		if event.type == pygame.KEYDOWN:
+			if event.key == pygame.K_SPACE:
+				board.append(deck.pop(0))
+				for x in players_in_game:
+					x.evaluate(board)
+				for x in board:
+					x.showing = True
 
+	pygame.display.update()
+
+	clock.tick(15)
+	print(set([x.current_bet for x in players_in_game]))
 pygame.quit()
