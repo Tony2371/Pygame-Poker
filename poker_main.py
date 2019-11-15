@@ -27,10 +27,6 @@ class Card(object):
         else:
             self.card_image = pygame.transform.scale(pygame.image.load("deck_images/back.jpg"),(128//3, 178//3))
             return self.card_image
-       
-
-
-
 
 class StandardDeck(list):
     def __init__(self):
@@ -72,6 +68,8 @@ class Player(object):
         self.suit_list = []
         self.chip_amount = 1000
         self.current_bet = 0
+        self.ingame = True
+        self.made_action = False
 
         self.combination = [0,0,0]
         # combination takes 3 arguments
@@ -79,30 +77,45 @@ class Player(object):
         # second - highest card value in combination
         # third - second high card (for two pairs and Full house)
         self.kicker = [0,0,0]
+        self.comb_names = {
+            1:"High Card",
+            2:"Pair",
+            3:"Two pairs",
+            4:"Three of a kind",
+            5:"Straight",
+            6:"Flush",
+            7:"Full house",
+            8:"Four of a kind",
+            9:"Straight flush"}
 
         # GUI variables and functions
-        self.surface = pygame.Surface((228, 250))
+        self.surface = pygame.Surface(((128//3)*2+30, 200))
 
-    def draw_player_surface(self, main_window, x_position, players_list):
-        main_window.blit(self.surface,(10+x_position,10))
+    def draw_player_surface(self, main_window, coordinates_tuple, players_list):
+        main_window.blit(self.surface,(coordinates_tuple[0],coordinates_tuple[1]))
         self.surface.fill((50,50,50))
         pygame.draw.rect(self.surface, (255, 255, 255), self.surface.get_rect(), 3)
-        self.surface.blit(self.hand[0].draw_card(), (10, 10))
-        self.surface.blit(self.hand[1].draw_card(), (20 + 128 // 3, 10))
+        pygame.draw.line(self.surface,(255,255,255),[0,self.surface.get_height()*0.85],[self.surface.get_width(),self.surface.get_height()*0.85],3)
+        if self.ingame:
+            self.surface.blit(self.hand[0].draw_card(), (10, 10))
+            self.surface.blit(self.hand[1].draw_card(), (20 + 128 // 3, 10))
 
-        f1 = pygame.font.Font(None, 25)
-        line_1 = f1.render(str(self.name), 0, (255, 255, 255))
-        line_2 = f1.render("Chips amount: {0}".format(self.chip_amount), 0, (255, 255, 255))
-        line_3 = f1.render("Bet {0} chips to continue!".format(max([l.current_bet for l in players_list])-self.current_bet), 0, (255, 255, 255))
-        line_4 = f1.render("Current bet:{0}".format(self.current_bet),0, (150,255,150))
+        f1 = pygame.font.Font(None,16)
+        if self.ingame:
+            line_1 = f1.render("Player {0}".format(self.name), 1, (255, 255, 255))
+            line_2 = f1.render("Chips: {0}".format(self.chip_amount), 1, (255, 255, 255))
+            line_3 = f1.render("{0} of {1}".format(self.comb_names[self.combination[0]], self.combination[1]),1,(255,255,255))
 
-        self.surface.blit(line_1, (10, 10 * 2 + 178 // 3))
-        self.surface.blit(line_2, (10, 10 * 4 + 178 // 3))
-        self.surface.blit(line_3, (10, 10 * 6 + 178 // 3))
+            line_5 = f1.render("Current bet:{0}".format(self.current_bet),1, (150,255,150))
         
-        self.surface.blit(line_4, (10,215))
-
-        pygame.draw.line(self.surface,(255,255,255),[0,self.surface.get_height()*0.8],[self.surface.get_width(),self.surface.get_height()*0.8],3)
+            self.surface.blit(line_1, (10, 10 * 2 + 178 // 3))
+            self.surface.blit(line_2, (10, 10 * 4 + 178 // 3))
+            self.surface.blit(line_3, (10, 10 * 6 + 178 // 3))
+            
+            self.surface.blit(line_5, (10,self.surface.get_height()-20))
+        if not self.ingame:
+            fold_text =  line_5 = f1.render("Player folded",0, (225,20,20))
+            self.surface.blit(fold_text, (10,self.surface.get_height()-23))
 
 
     def __repr__(self):
@@ -214,17 +227,19 @@ class Player(object):
         elif len(self.val_list) != len(set(self.val_list)):
             self.combination[0] = 2
             self.combination[1] = self.val_list[self.count_list.index(2)]
-            self.kicker[0] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-1]
-            self.kicker[1] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-2]
-            self.kicker[2] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-3]
+            if len(self.val_list) >= 5:
+                self.kicker[0] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-1]
+                self.kicker[1] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-2]
+                self.kicker[2] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-3]
         
             #1 - High Card
         else:
             self.combination[0] = 1
             self.combination[1] = max(self.val_list)
-            self.kicker[0] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-1]
-            self.kicker[1] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-2]
-            self.kicker[2] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-3]
+            if len(self.val_list) >= 5:
+                self.kicker[0] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-1]
+                self.kicker[1] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-2]
+                self.kicker[2] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-3]
 
     def bet(self, bet_amount, board):
         self.chip_amount -= bet_amount
@@ -239,15 +254,19 @@ class Player(object):
     # 3 - bet > N (raise)
     def decision(self, action,players,board):
         if action == "fold":
-            self.hand = None
+            self.ingame = False
+            self.current_bet = 0
+            #self.hand = None
             print(self,"folded")
         elif action == "call":
-            print(self,"calls for {0} chips".format(max(x.current_bet for x in players)-self.current_bet))
-            self.bet(max(x.current_bet for x in players)-self.current_bet,board)
+            print(self,"calls for {0} chips".format(max([x.current_bet for x in players])-self.current_bet))
+            self.bet(max([x.current_bet for x in players])-self.current_bet,board)
+            self.made_action = True
         elif action == "raise":
             raise_amount = int(input("Raise for:"))
             self.bet(raise_amount,board)
             print(self,"raises for {0} chips".format(raise_amount))
+            self.made_action = True
         else:
             print("Enter valid action!")
    
@@ -255,19 +274,30 @@ class StandardBoard(list):
     def __init__(self):
         self.bank = 0
         self.game_round = -1
+        self.street = "preflop"
 
         # GUI variables and functions
-        self.surface = pygame.Surface(((6*10)+(128//3*5),20+178//3+60))
+        self.surface = pygame.Surface((270,140))
 
     def draw_board_surface(self, main_window):
-        main_window.blit(self.surface,((800-self.surface.get_width())//2,300))
+        main_window.blit(self.surface,((800-self.surface.get_width())//2,230))
         self.surface.fill((15,45,45))
         pygame.draw.rect(self.surface, (50, 50, 190), self.surface.get_rect(), 3)
-        self.surface.blit(self[0].draw_card(), (10, 70))
-        self.surface.blit(self[1].draw_card(), (20 + (128 // 3), 70))
-        self.surface.blit(self[2].draw_card(), (30 + 2*(128 // 3), 70))
-        self.surface.blit(self[3].draw_card(), (40 + 3*(128 // 3), 70))
-        self.surface.blit(self[4].draw_card(), (50 + 4*(128 // 3), 70))
+        if len(self) == 3:
+            self.surface.blit(self[0].draw_card(), (10, 70))
+            self.surface.blit(self[1].draw_card(), (20 + (128 // 3), 70))
+            self.surface.blit(self[2].draw_card(), (30 + 2*(128 // 3), 70))
+        if len(self) == 4:
+            self.surface.blit(self[0].draw_card(), (10, 70))
+            self.surface.blit(self[1].draw_card(), (20 + (128 // 3), 70))
+            self.surface.blit(self[2].draw_card(), (30 + 2*(128 // 3), 70))            
+            self.surface.blit(self[3].draw_card(), (40 + 3*(128 // 3), 70))
+        if len(self) == 5:
+            self.surface.blit(self[0].draw_card(), (10, 70))
+            self.surface.blit(self[1].draw_card(), (20 + (128 // 3), 70))
+            self.surface.blit(self[2].draw_card(), (30 + 2*(128 // 3), 70))            
+            self.surface.blit(self[3].draw_card(), (40 + 3*(128 // 3), 70))
+            self.surface.blit(self[4].draw_card(), (50 + 4*(128 // 3), 70))
 
         f1 = pygame.font.Font(None, 35)
         line_1 = f1.render("Current bank: {0}".format(self.bank), 0, (50, 215, 50))
