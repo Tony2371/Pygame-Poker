@@ -7,7 +7,7 @@
 
 Планируется реализовать:
 - Систему ставок
-- GUI с использованием PyGame
+- GUI с использованием Tkinter
 - Простые алгоритмы ИИ (Always calling, Always folding, Always Raising, Always Random)
 
 
