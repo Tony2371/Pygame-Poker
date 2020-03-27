@@ -38,16 +38,16 @@ class StandardDeck(list):
         for name in values:
             for suit in suits:
                 self.append(Card(name,values[name],suit))
-    
+
     def __repr__(self):
         return "{0} cards remaining in deck".format(len(self))
-    
+
     def shuffle(self):
         [shuffle(self) for x in range(71)]
         print("Deck shuffled")
         self.shuffled = True
 
-class Player(object):   
+class Player(object):
     def __init__(self, name):
         self.name = name
         self.hand = []
@@ -93,32 +93,22 @@ class Player(object):
         else:
             return 0
 
-#   def straight_eval(self,card_list):
-#       data_set = list(set(card_list))
-#       ranges = []
-#       for k, g in groupby(enumerate(data_set), lambda x:x[0]-x[1]):
-#           group = list(map(itemgetter(1),g))
-#           ranges.append(range(group[0],group[-1]))
-#           if any(True for x in [len(a) for a in ranges] if x >= 4): 
-#               return max([x for x in ranges if len(x) >= 4][0])+1
-#           else:
-
 
     def straight_flush_eval(self, board, suits):
         test = []
         if self.straight_eval(board) != 0 and 5 in [suits.count(x) for x in suits]:
-            main_suit = [x for x in suits if suits.count(x)>=5][0]            
+            main_suit = [x for x in suits if suits.count(x)>=5][0]
             high_card = self.straight_eval(board)
             if suits[board.index(high_card)] == main_suit or suits[::-1][board[::-1].index(high_card)] == main_suit:
-                test.append(1)            
+                test.append(1)
             if suits[board.index(high_card-1)] == main_suit or suits[::-1][board[::-1].index(high_card-1)] == main_suit:
-                test.append(1)            
+                test.append(1)
             if suits[board.index(high_card-2)] == main_suit or suits[::-1][board[::-1].index(high_card-2)] == main_suit:
-                test.append(1)            
+                test.append(1)
             if suits[board.index(high_card-3)] == main_suit or suits[::-1][board[::-1].index(high_card-3)] == main_suit:
-                test.append(1)            
+                test.append(1)
             if suits[board.index(high_card-4)] == main_suit or suits[::-1][board[::-1].index(high_card-4)] == main_suit:
-                test.append(1)            
+                test.append(1)
             return sum(test)
 
     def low_straight_flush_eval(self, board, suits):
@@ -152,25 +142,25 @@ class Player(object):
             #9.1 - Low straight flush
         elif self.low_straight_flush_eval(self.val_list, self.suit_list) == 5:
             self.combination[0] = 9
-            self.combination[1] = 5           
-                  
+            self.combination[1] = 5
+
             #8 - Four of a kind
         elif 4 in self.count_list:
             self.combination[0] = 8
             self.combination[1] = self.val_list[self.count_list.index(4)]
             #self.combination[2] = max([x for x,y in zip(self.val_list,self.count_list) if y == 1])
-           
+
             #7 - Full House
         elif 3 in self.count_list and 2 in self.count_list:
             self.combination[0] = 7
             self.combination[1] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 2 or y == 3])[-1]
             self.combination[2] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 2 or y == 3])[0]
-           
+
             #6 - Flush
         elif 5 in [self.suit_list.count(x) for x in self.suit_list] or 6 in [self.suit_list.count(x) for x in self.suit_list] or 7 in [self.suit_list.count(x) for x in self.suit_list]:
             self.combination[0] = 6
             self.combination[1] = max([x for x,y in zip(self.val_list,self.suit_count_list) if y >= 5])
-           
+
             #5 - Straight
         elif self.straight_eval(self.val_list) != 0:
             self.combination[0] = 5
@@ -187,9 +177,9 @@ class Player(object):
             self.combination[1] = self.val_list[self.count_list.index(3)]
             self.kicker[0] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-1]
             #self.kicker[1] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-2]
-      
+
             #3 - Two Pairs
-        elif self.count_list.count(2) >= 4:            
+        elif self.count_list.count(2) >= 4:
             self.combination[0] = 3
             self.combination[1] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 2])[-1]
             self.combination[2] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 2])[-3]
@@ -206,7 +196,7 @@ class Player(object):
             self.kicker[0] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-1]
             self.kicker[1] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-2]
             self.kicker[2] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-3]
-        
+
             #1 - High Card
         else:
             self.combination[0] = 1
@@ -240,7 +230,7 @@ class Player(object):
         else:
             print("Enter valid action!")
 
-   
+
 class StandardBoard(list):
     def __init__(self):
         self.bank = 0
@@ -251,5 +241,3 @@ class StandardBoard(list):
         sb = players[1]
         bb.bet(big_blind,self)
         sb.bet(big_blind//2,self)
-
-
