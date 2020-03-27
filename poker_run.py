@@ -68,4 +68,3 @@ if __name__ == "__main__":
 		print("Kicker:", player_1.kicker[0])
 		print(comb_names[player_2.combination[0]], "of", player_2.combination[1], "and", player_2.combination[2])
 		print("Kicker:", player_2.kicker[0])
-		

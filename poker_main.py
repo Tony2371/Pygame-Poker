@@ -1,6 +1,4 @@
 from random import shuffle
-import pygame
-
 
 class Card(object):
     def __init__(self, name, value, suit):
