@@ -45,6 +45,10 @@ class StandardDeck(list):
         print("Deck shuffled")
         self.shuffled = True
 
+    def reset(self):
+        self.clear()
+        self.__init__()
+
 class Player(object):
     def __init__(self, name):
         self.name = name
