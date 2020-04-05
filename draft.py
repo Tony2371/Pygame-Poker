@@ -1,41 +1,69 @@
-import pygame
 from random import randint
-pygame.init()
+from tkinter import *
+from PIL import Image, ImageTk
+from poker_main import StandardDeck, StandardBoard
 
-win_width = 800
-win_height = 600
+root = Tk()
+root.geometry("640x480")
+deck = StandardDeck()
+board = StandardBoard()
 
-window = pygame.display.set_mode((win_width, win_height))
-pygame.display.set_caption("PyGame test")
+def load_card_images():
+	suit_list = ["c","d","h","s"]
+	card_img_dict = {}
+	for value in range(2,15):
+		for suit in suit_list:
+			load = Image.open("D:/pkr_face/deck_images_jpg/{0}{1}.jpg".format(value,suit))
+			resize = load.resize((int(128/3),int(178/3)))
+			render = ImageTk.PhotoImage(resize)
+			card_img_dict.update({"{0}{1}".format(value,suit) : render})
 
-clock = pygame.time.Clock()
-running = True
+	return card_img_dict
 
-# Draw variables
-gap = 10
-player_1_surface = pygame.Surface(((128//3*2+gap*3)*2, 250))
-hand_card_1 = pygame.transform.scale(pygame.image.load('deck_images/14s.jpg'), (128//3, 178//3))
-hand_card_2 = pygame.transform.scale(pygame.image.load('deck_images/14h.jpg'), (128//3, 178//3))
+img_dict = load_card_images()
+frame = LabelFrame(root,text="Board cards")
+frame.grid()
 
-while running:
-    for i in pygame.event.get():
-        if i.type == pygame.QUIT:
-            pygame.quit()
+def add_card():
+    global deck
+    global board
+    for c in deck:
+        c.showing = True
+    if len(board) < 5:
+        board.append(deck.pop(randint(0,len(deck)-1)))
+    print(board)
+    print(deck)
+    board_card_1 = Label(frame,image=img_dict["{0}{1}".format(board[-1].value,board[-1].suit)])
+    board_card_1.grid(row=0,column=len(board))
 
-    window.blit(player_1_surface, (win_width-(player_1_surface.get_width()+gap*3), win_height-(player_1_surface.get_height()+gap*3)))
-    pygame.draw.rect(player_1_surface, (255, 255, 255), player_1_surface.get_rect(), 3)
-    player_1_surface.blit(hand_card_1, (gap, gap))
-    player_1_surface.blit(hand_card_2, (gap*2+128//3, gap))
 
-    f1 = pygame.font.Font(None, 25)
-    line_1 = f1.render("Player name", 0, (255, 255, 255))
-    line_2 = f1.render("Chips amount: 1000", 0, (255, 255, 255))
-    line_3 = f1.render("Bet 100 chips to continue!", 0, (255, 255, 255))
+def reset_board():
+    global board
+    global deck
+    board.clear()
+    deck.reset()
+    print("The game is back on!")
+    for widget in frame.winfo_children():
+        widget.destroy()
 
-    player_1_surface.blit(line_1, (gap, gap*2 + 178 // 3))
-    player_1_surface.blit(line_2, (gap, gap*4 + 178 // 3))
-    player_1_surface.blit(line_3, (gap, gap*6 + 178 // 3))
 
-    pygame.display.update()
 
-    clock.tick(30)
+button = Button(root,text="Add card",width=25,command=add_card)
+button.grid(row=1,columnspan=5)
+button_1 = Button(root,text="Clear",width=25,command=reset_board)
+button_1.grid(row=2,columnspan=5)
+
+columns = 0
+
+for card in board:
+    columns += 1
+    card_0 = Label(root,text=deck[0])
+    card_0.grid(column=columns)
+
+for wid in root.winfo_children():
+    print (wid)
+
+if len(board) >= 5:
+    button.state = DISABLED
+
+root.mainloop()
