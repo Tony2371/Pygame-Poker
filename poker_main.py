@@ -18,7 +18,8 @@ class Card(object):
 class StandardDeck(list):
     def __init__(self):
         self.shuffled = False
-        suits = ["\u2660", "\u2665", "\u2666", "\u2663"]
+        #suits = ["\u2660", "\u2665", "\u2666", "\u2663"]
+        suits = ["c","d","h","s"]
         values = {
         	    "Two":2,
         	    "Three":3,
@@ -68,6 +69,9 @@ class Player(object):
 
     def __repr__(self):
         return str("Player "+self.name)
+
+    def reset(self):
+        self.hand.clear()
 
     def straight_eval(self,input_list):
         card_list = sorted(input_list)
