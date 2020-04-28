@@ -1,6 +1,5 @@
 '''
 TO DO LIST:
-- Low Straight flush combination (SOLVED)
 - Kickers
 - Second high card for Two pairs and Full House
 
@@ -8,63 +7,59 @@ KNOWN BUGS:
 - max([x for x,y in zip(self.val_list,self.count_list) if y == 1])
 will be empty sequence if none of y == 1
 - Full house error if two sets
-
-GAME STAGES:
-
+-
 '''
 from poker_main import Player, StandardDeck, StandardBoard
 from random import randint
 
-comb_names = {
-	1: "High Card",
-	2: "Pair",
-	3: "Two pairs",
-	4: "Three of a kind",
-	5: "Straight",
-	6: "Flush",
-	7: "Full house",
-	8: "Four of a kind",
-	9: "Straight flush"}
-
 deck = StandardDeck()
 board = StandardBoard()
 player_1 = Player("One")
+player_2 = Player("Two")
+player_3 = Player("Three")
+player_4 = Player("Four")
 
+players_in_game = [player_1,player_2,player_3,player_4]
+game_stages = []
 
-if __name__ == "__main__":
-	counter = 0
+def check_bets(players):
 	while True:
-		counter += 1
-		deck = StandardDeck()
-		board = StandardBoard()
-		player_1 = Player("One")
-		player_2 = Player("Two")
+		for player in players:
+			if player.ingame and not player.answered:
+				print(player,", you'd better make a bet!")
+				player.decision(input("Decision:"),players_in_game,board)
+		if all([player.answered for player in players if player.ingame]):
+			break
+	print("Bets done!!!")
+
+	for player in players_in_game:
+		player.answered = False
+
+while True:
+	deck.reset()
+	if not deck.shuffled:
 		deck.shuffle()
-		for card in deck:
-			card.showing = True
+
+	for player in players_in_game:
+		player.hand.append(deck.pop(0))
+		player.hand.append(deck.pop(0))
+		print("--------",player,"--------")
+		print("Cards: ",player.hand)
+		print(player.chip_amount)
+		print(player.current_bet)
+	print("Bank:",board.bank)
+
+	board.blind_bet(players_in_game,100)
+	check_bets(players_in_game)
+	print("Preflop ended!")
+
+	board.append(deck.pop(0))
+	board.append(deck.pop(0))
+	board.append(deck.pop(0))
+	print("Board: ",board)
+
+	check_bets(players_in_game)
+	print("Flop ended!")
 
 
-		player_1.hand.append(deck.pop(randint(0,len(deck)-1)))
-		player_1.hand.append(deck.pop(randint(0,len(deck)-1)))
-		player_2.hand.append(deck.pop(randint(0,len(deck)-1)))
-		player_2.hand.append(deck.pop(randint(0,len(deck)-1)))
-
-		board.append(deck.pop(randint(0,len(deck)-1)))
-		board.append(deck.pop(randint(0,len(deck)-1)))
-		board.append(deck.pop(randint(0,len(deck)-1)))
-		board.append(deck.pop(randint(0,len(deck)-1)))
-		board.append(deck.pop(randint(0,len(deck)-1)))
-
-		print(counter)
-		print(player_1,player_1.hand)
-		print(player_2,player_2.hand)
-		print(board)
-
-		player_1.evaluate(board)
-		player_2.evaluate(board)
-
-		print("------------------------------------------------")
-		print(comb_names[player_1.combination[0]], "of", player_1.combination[1], "and", player_1.combination[2])
-		print("Kicker:", player_1.kicker[0])
-		print(comb_names[player_2.combination[0]], "of", player_2.combination[1], "and", player_2.combination[2])
-		print("Kicker:", player_2.kicker[0])
+	break
