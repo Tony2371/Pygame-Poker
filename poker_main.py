@@ -5,7 +5,7 @@ class Card(object):
         self.value = value
         self.suit = suit
         self.name = name
-        self.showing = False
+        self.showing = True
     def __repr__(self):
         if self.showing and self.value <=10:
             return str(self.value)+" of "+self.suit
@@ -18,8 +18,8 @@ class Card(object):
 class StandardDeck(list):
     def __init__(self):
         self.shuffled = False
-        #suits = ["\u2660", "\u2665", "\u2666", "\u2663"]
-        suits = ["c","d","h","s"]
+        suits = ["\u2660", "\u2665", "\u2666", "\u2663"]
+        #suits = ["c","d","h","s"]
         values = {
         	    "Two":2,
         	    "Three":3,
@@ -42,7 +42,7 @@ class StandardDeck(list):
         return "{0} cards remaining in deck".format(len(self))
 
     def shuffle(self):
-        [shuffle(self) for x in range(71)]
+        [shuffle(self) for x in range(7)]
         print("Deck shuffled")
         self.shuffled = True
 
@@ -57,8 +57,11 @@ class Player(object):
         self.val_list = []
         self.count_list = []
         self.suit_list = []
+
+        self.ingame = True
         self.chip_amount = 1000
         self.current_bet = 0
+        self.answered = False
 
         self.combination = [0,0,0]
         # combination takes 3 arguments
@@ -66,6 +69,16 @@ class Player(object):
         # second - highest card value in combination
         # third - second high card (for two pairs and Full house)
         self.kicker = [0,0,0]
+        self.comb_names = {
+        	1: "High Card",
+        	2: "Pair",
+        	3: "Two pairs",
+        	4: "Three of a kind",
+        	5: "Straight",
+        	6: "Flush",
+        	7: "Full house",
+        	8: "Four of a kind",
+        	9: "Straight flush"}
 
     def __repr__(self):
         return str("Player "+self.name)
@@ -222,17 +235,22 @@ class Player(object):
     # 1 - bet 0 (check)
     # 2 - bet N (call)
     # 3 - bet > N (raise)
-    def decision(self, action,players,board):
+    def decision(self,action,players,board):
         if action == "fold":
             self.hand = None
+            self.ingame = False
             print(self,"folded")
         elif action == "call":
             print(self,"calls for {0} chips".format(max(x.current_bet for x in players)-self.current_bet))
             self.bet(max(x.current_bet for x in players)-self.current_bet,board)
+            self.answered = True
         elif action == "raise":
             raise_amount = int(input("Raise for:"))
             self.bet(raise_amount,board)
             print(self,"raises for {0} chips".format(raise_amount))
+            for player in players:
+                player.answered = False
+            self.answered = True
         else:
             print("Enter valid action!")
 
@@ -241,9 +259,12 @@ class StandardBoard(list):
     def __init__(self):
         self.bank = 0
         self.game_round = -1
+        self.blinds_list = [20,50,100,200,400,800,1600]
+        self.current_blind = self.blinds_list[0]
+        self.game_stages = ["preflop","flop","turn","river"]
 
     def blind_bet(self, players, big_blind):
-        bb = players[0]
-        sb = players[1]
+        bb = players[-1]
+        sb = players[-2]
         bb.bet(big_blind,self)
         sb.bet(big_blind//2,self)
