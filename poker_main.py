@@ -91,8 +91,8 @@ class Player(object):
         self.answered = False
         self.winner = False
         self.current_bet = 0
-        self.combination = [0,0,0]
-        self.kicker = [0,0,0]
+        self.combination = [0,0,0,0,0,0]
+
 
     def straight_eval(self,input_list):
         card_list = sorted(input_list)
@@ -175,13 +175,17 @@ class Player(object):
         elif 4 in self.count_list:
             self.combination[0] = 8
             self.combination[1] = self.val_list[self.count_list.index(4)]
-            #self.combination[2] = max([x for x,y in zip(self.val_list,self.count_list) if y == 1])
+
 
             #7 - Full House
+        elif self.count_list.count(3) == 6: #this handles two "three of a kind" problem
+            self.combination[0] = 7
+            self.combination[1] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 3])[-1]
+            self.combination[2] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 3])[-4]
         elif 3 in self.count_list and 2 in self.count_list:
             self.combination[0] = 7
-            self.combination[1] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 2 or y == 3])[-1]
-            self.combination[2] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 2 or y == 3])[0]
+            self.combination[1] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 3])[-1]
+            self.combination[2] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 2])[0]
 
             #6 - Flush
         elif 5 in [self.suit_list.count(x) for x in self.suit_list] or 6 in [self.suit_list.count(x) for x in self.suit_list] or 7 in [self.suit_list.count(x) for x in self.suit_list]:
@@ -210,11 +214,12 @@ class Player(object):
             self.combination[0] = 3
             self.combination[1] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 2])[-1]
             self.combination[2] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 2])[-3]
-            if self.count_list.count(2) == 6:
-                self.combination[3] = max([sorted([x for x,y in zip(self.val_list,self.count_list) if y == 2])[0],
-                    sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[0]])
-            else:
-                self.combination[4] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-1]
+
+            #if self.count_list.count(2) == 6:
+            #    self.combination[3] = max([sorted([x for x,y in zip(self.val_list,self.count_list) if y == 2])[0],
+            #        sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[0]])
+            #else:
+            #    self.combination[4] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-1]
 
             #2 - One Pair
         elif len(self.val_list) != len(set(self.val_list)):
@@ -279,6 +284,9 @@ class StandardBoard(list):
         self.current_blind = self.blinds_list[0]
         self.game_stages = ["preflop","flop","turn","river"]
 
+    def reset(self):
+        self.clear()
+
     def blind_bet(self, players, big_blind):
         bb = players[-1]
         sb = players[-2]
@@ -311,7 +319,7 @@ class StandardBoard(list):
 
         if len(board) == 5:
             comb_list = [player.combination for player in players]
-            winner_combination = sorted(comb_list)[::-1][0]
+            winner_combination = sorted(comb_list)[-1]
             print(winner_combination)
             for player in players:
                 if player.combination == winner_combination:
