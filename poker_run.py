@@ -1,13 +1,15 @@
 '''
 TO DO LIST:
-- Kickers
+- Kickers for all combinations
 - Second high card for Two pairs and Full House
--
+- Bank split situation
 
 KNOWN BUGS:
 - max([x for x,y in zip(self.val_list,self.count_list) if y == 1])
 will be empty sequence if none of y == 1
-- Full house error if two sets
+
+SMALL ISSUES:
+- Four of a kind doesnt have kicker because it doesnt need
 '''
 from poker_main import Player, StandardDeck, StandardBoard
 from random import randint
@@ -18,10 +20,16 @@ player_1 = Player("One")
 player_2 = Player("Two")
 player_3 = Player("Three")
 player_4 = Player("Four")
+player_5 = Player("Five")
+player_6 = Player("Six")
 
-players_in_game = [player_1,player_2,player_3,player_4]
+players_in_game = [player_1,player_2,player_3,player_4,player_5,player_6]
+running = True
 
-while True:
+while running:
+	for player in players_in_game:
+		player.reset()
+	board.reset()
 	deck.reset()
 	if not deck.shuffled:
 		deck.shuffle()
@@ -70,4 +78,11 @@ while True:
 	for player in players_in_game:
 		print(player,"|",player.chip_amount,"|",player.hand,"|",player.combination)
 
-	break
+	for player in players_in_game:
+		if player.chip_amount <= 0:
+			players_in_game.remove(player)
+
+	for player in players_in_game:
+		if player.count_list.count(3) == 6:
+			print(player.count_list)
+			running = False
