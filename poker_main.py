@@ -64,14 +64,14 @@ class Player(object):
         self.answered = False
         self.winner = False
 
-        self.combination = [0,0,0]
-        # combination takes 3 arguments
-        # where first - combination index
-        # second - highest card value in combination
-        # third - second high card (for two pairs and Full house)
-        self.kicker = [0,0,0]
+        self.combination = [0,0,0,0,0,0]
+        # combination takes 6 arguments where:
+        # 0 - combination index
+        # 1 - highest card value in combination
+        # 2 - second high card (for two pairs and Full house)
+        # 3-5 - kickers
         self.comb_names = {
-            0:"",
+            0: "None",
         	1: "High Card",
         	2: "Pair",
         	3: "Two pairs",
@@ -202,7 +202,7 @@ class Player(object):
         elif 3 in self.count_list:
             self.combination[0] = 4
             self.combination[1] = self.val_list[self.count_list.index(3)]
-            self.kicker[0] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-1]
+            self.combination[2] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-1]
             #self.kicker[1] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-2]
 
             #3 - Two Pairs
@@ -211,10 +211,10 @@ class Player(object):
             self.combination[1] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 2])[-1]
             self.combination[2] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 2])[-3]
             if self.count_list.count(2) == 6:
-                self.kicker[0] = max([sorted([x for x,y in zip(self.val_list,self.count_list) if y == 2])[0],
+                self.combination[3] = max([sorted([x for x,y in zip(self.val_list,self.count_list) if y == 2])[0],
                     sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[0]])
             else:
-                self.kicker[0] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-1]
+                self.combination[4] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-1]
 
             #2 - One Pair
         elif len(self.val_list) != len(set(self.val_list)):
@@ -310,22 +310,13 @@ class StandardBoard(list):
                     player.winner = True
 
         if len(board) == 5:
-            combinations = [player.combination[0] for player in players if player.ingame]
-            comb_1 = []
+            comb_list = [player.combination for player in players]
+            winner_combination = sorted(comb_list)[::-1][0]
+            print(winner_combination)
             for player in players:
-                if player.combination[0] == max(combinations) and player.ingame:
-                    comb_1.append(1)
-                else:
-                    comb_1.append(0)
-            print(comb_1)
-            for player in players:
-                if player.combination[0] == max(combinations) and combinations.count(max(combinations)) == 1:
+                if player.combination == winner_combination:
+                    print(player, "is the winner!!!")
                     player.winner = True
-                    print(player,"is the winner!")
-                elif player.combination[0] == max(combinations) and player.combination[1] == max(comb_1) and comb_1.count(max(comb_1)) == 1:
-                    player.winner = True
-                    print(player, "is the winner!")
-
 
         for player in players:
             if player.winner == True:
@@ -333,6 +324,3 @@ class StandardBoard(list):
                 print(player, "wins {0} chips!".format(board.bank))
                 board.bank = 0
                 return True
-
-
-
