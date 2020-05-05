@@ -7,7 +7,7 @@ class Card(object):
         self.name = name
         self.showing = True
     def __repr__(self):
-        if self.showing and self.value <=10:
+        if self.showing and self.value <= 10:
             return str(self.value)+" of "+self.suit
         elif self.showing:
             return str(self.name)+" of "+self.suit
@@ -62,6 +62,7 @@ class Player(object):
         self.chip_amount = 1000
         self.current_bet = 0
         self.answered = False
+        self.winner = False
 
         self.combination = [0,0,0]
         # combination takes 3 arguments
@@ -70,6 +71,7 @@ class Player(object):
         # third - second high card (for two pairs and Full house)
         self.kicker = [0,0,0]
         self.comb_names = {
+            0:"",
         	1: "High Card",
         	2: "Pair",
         	3: "Two pairs",
@@ -85,6 +87,12 @@ class Player(object):
 
     def reset(self):
         self.hand.clear()
+        self.ingame = True
+        self.answered = False
+        self.winner = False
+        self.current_bet = 0
+        self.combination = [0,0,0]
+        self.kicker = [0,0,0]
 
     def straight_eval(self,input_list):
         card_list = sorted(input_list)
@@ -212,17 +220,17 @@ class Player(object):
         elif len(self.val_list) != len(set(self.val_list)):
             self.combination[0] = 2
             self.combination[1] = self.val_list[self.count_list.index(2)]
-            self.kicker[0] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-1]
-            self.kicker[1] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-2]
-            self.kicker[2] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-3]
+            #self.kicker[0] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-1]
+            #self.kicker[1] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-2]
+            #self.kicker[2] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-3]
 
             #1 - High Card
         else:
             self.combination[0] = 1
             self.combination[1] = max(self.val_list)
-            self.kicker[0] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-1]
-            self.kicker[1] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-2]
-            self.kicker[2] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-3]
+            #self.kicker[0] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-1]
+            #self.kicker[1] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-2]
+            #self.kicker[2] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-3]
 
     def bet(self, bet_amount, board):
         self.chip_amount -= bet_amount
@@ -254,11 +262,19 @@ class Player(object):
         else:
             print("Enter valid action!")
 
+    def print_player_status(self):
+        print("--------------------")
+        print(self.name,":",self.hand)
+        print(self.chip_amount)
+        print(self.current_bet)
+        print(self.comb_names[self.combination[0]],"of",self.combination[1])
+        print("--------------------")
+
 
 class StandardBoard(list):
     def __init__(self):
         self.bank = 0
-        self.game_round = -1
+        self.game_round = 0
         self.blinds_list = [20,50,100,200,400,800,1600]
         self.current_blind = self.blinds_list[0]
         self.game_stages = ["preflop","flop","turn","river"]
@@ -268,3 +284,55 @@ class StandardBoard(list):
         sb = players[-2]
         bb.bet(big_blind,self)
         sb.bet(big_blind//2,self)
+
+    def check_bets(self, players, board):
+        while True:
+            for player in players:
+                if len(board) > 1 and player.ingame:
+                    player.evaluate(board)
+                if player.ingame and not player.answered:
+                    player.print_player_status()
+                    #player.decision(input("{0}'s decision:".format(player)), players, board)
+                    player.decision("call", players, board)
+            if all([player.answered for player in players if player.ingame]):
+                break
+        print("Bets done!!!")
+
+        for player in players:
+            player.answered = False
+            player.current_bet = 0
+
+    def check_winner(self, players, board):
+        status_list = [player.ingame for player in players]
+        if status_list.count(True) == 1:
+            for player, status in zip(players, status_list):
+                if status:
+                    player.winner = True
+
+        if len(board) == 5:
+            combinations = [player.combination[0] for player in players if player.ingame]
+            comb_1 = []
+            for player in players:
+                if player.combination[0] == max(combinations) and player.ingame:
+                    comb_1.append(1)
+                else:
+                    comb_1.append(0)
+            print(comb_1)
+            for player in players:
+                if player.combination[0] == max(combinations) and combinations.count(max(combinations)) == 1:
+                    player.winner = True
+                    print(player,"is the winner!")
+                elif player.combination[0] == max(combinations) and player.combination[1] == max(comb_1) and comb_1.count(max(comb_1)) == 1:
+                    player.winner = True
+                    print(player, "is the winner!")
+
+
+        for player in players:
+            if player.winner == True:
+                player.chip_amount += board.bank
+                print(player, "wins {0} chips!".format(board.bank))
+                board.bank = 0
+                return True
+
+
+
