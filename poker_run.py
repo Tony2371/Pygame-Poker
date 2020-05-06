@@ -1,16 +1,17 @@
 '''
 TO DO LIST:
-- Kickers for all combinations
-- Second high card for Two pairs and Full House
 - Bank split situation
+- All-in bank split
+- Bet limit mechanic (invalid bet if bet > chip amount)
+- Blinds increase
 
 KNOWN BUGS:
-- max([x for x,y in zip(self.val_list,self.count_list) if y == 1])
-will be empty sequence if none of y == 1
+- no bugs known for now
 
 SMALL ISSUES:
 - Four of a kind doesnt have kicker because it doesnt need
 '''
+
 from poker_main import Player, StandardDeck, StandardBoard
 from random import randint
 
@@ -82,7 +83,5 @@ while running:
 		if player.chip_amount <= 0:
 			players_in_game.remove(player)
 
-	for player in players_in_game:
-		if player.count_list.count(3) == 6:
-			print(player.count_list)
-			running = False
+	if len(players_in_game) == 1:
+		running = False
