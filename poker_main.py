@@ -245,6 +245,9 @@ class Player(object):
 
 
     def bet(self, bet_amount, board):
+        if bet_amount > self.chip_amount:
+            print("You can't bet more than {0}".format(self.chip_amount))
+            bet_amount = self.chip_amount
         self.chip_amount -= bet_amount
         self.current_bet += bet_amount
         board.bank += bet_amount
@@ -288,27 +291,28 @@ class StandardBoard(list):
         self.bank = 0
         self.game_round = 0
         self.blinds_list = [20,50,100,200,400,800,1600]
-        self.current_blind = self.blinds_list[0]
-        self.game_stages = ["preflop","flop","turn","river"]
 
     def reset(self):
         self.clear()
 
-    def blind_bet(self, players, big_blind):
+
+    def blind_bet(self, players):
+        if self.game_round % 10 == 0 and self.game_round != 0:
+            self.blinds_list.pop(0)
         bb = players[-1]
         sb = players[-2]
-        bb.bet(big_blind,self)
-        sb.bet(big_blind//2,self)
+        bb.bet(self.blinds_list[0],self)
+        sb.bet(self.blinds_list[0]//2,self)
 
-    def check_bets(self, players, board):
+    def check_bets(self, players):
         while True:
             for player in players:
-                if len(board) > 1 and player.ingame:
-                    player.evaluate(board)
+                if len(self) > 1 and player.ingame:
+                    player.evaluate(self)
                 if player.ingame and not player.answered:
                     player.print_player_status()
                     #player.decision(input("{0}'s decision:".format(player)), players, board)
-                    player.decision("call", players, board)
+                    player.decision("call", players, self)
             if all([player.answered for player in players if player.ingame]):
                 break
         print("Bets done!!!")
@@ -317,14 +321,14 @@ class StandardBoard(list):
             player.answered = False
             player.current_bet = 0
 
-    def check_winner(self, players, board):
+    def check_winner(self, players):
         status_list = [player.ingame for player in players]
         if status_list.count(True) == 1:
             for player, status in zip(players, status_list):
                 if status:
                     player.winner = True
 
-        if len(board) == 5:
+        if len(self) == 5:
             comb_list = [player.combination for player in players]
             winner_combination = sorted(comb_list)[-1]
             for player in players:
@@ -334,7 +338,8 @@ class StandardBoard(list):
 
         for player in players:
             if player.winner == True:
-                player.chip_amount += board.bank
-                print(player, "wins {0} chips!".format(board.bank))
-                board.bank = 0
+                player.chip_amount += self.bank
+                print(player, "wins {0} chips!".format(self.bank))
+                self.bank = 0
+                self.game_round += 1
                 return True
