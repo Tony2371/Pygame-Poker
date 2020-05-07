@@ -93,7 +93,6 @@ class Player(object):
         self.current_bet = 0
         self.combination = [0,0,0,0,0,0]
 
-
     def straight_eval(self,input_list):
         card_list = sorted(input_list)
         if len(card_list) == 7:
@@ -176,7 +175,6 @@ class Player(object):
             self.combination[0] = 8
             self.combination[1] = self.val_list[self.count_list.index(4)]
 
-
             #7 - Full House
         elif self.count_list.count(3) == 6: # this handles two "three of a kind" problem
             self.combination[0] = 7
@@ -225,7 +223,6 @@ class Player(object):
             self.combination[2] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 2])[-3]
             self.combination[3] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-1]
 
-
             #2 - One Pair
         elif len(self.val_list) != len(set(self.val_list)):
             self.combination[0] = 2
@@ -242,7 +239,6 @@ class Player(object):
             self.combination[3] = sorted(self.val_list)[-3]
             self.combination[4] = sorted(self.val_list)[-4]
             self.combination[5] = sorted(self.val_list)[-5]
-
 
     def bet(self, bet_amount, board):
         if bet_amount > self.chip_amount:
@@ -267,8 +263,8 @@ class Player(object):
             print(self,"calls for {0} chips".format(max(x.current_bet for x in players)-self.current_bet))
             self.bet(max(x.current_bet for x in players)-self.current_bet,board)
             self.answered = True
-        elif action == "raise":
-            raise_amount = int(input("Raise for:"))
+        elif "raise" in action:
+            raise_amount = int(action.split("raise")[-1])
             self.bet(raise_amount,board)
             print(self,"raises for {0} chips".format(raise_amount))
             for player in players:
@@ -285,7 +281,6 @@ class Player(object):
         print(self.comb_names[self.combination[0]],"of",self.combination[1])
         print("--------------------")
 
-
 class StandardBoard(list):
     def __init__(self):
         self.bank = 0
@@ -293,11 +288,11 @@ class StandardBoard(list):
         self.blinds_list = [20,50,100,200,400,800,1600]
 
     def reset(self):
+        self.bank = 0
         self.clear()
 
-
     def blind_bet(self, players):
-        if self.game_round % 10 == 0 and self.game_round != 0:
+        if self.game_round % 10 == 0 and self.game_round != 0 and len(self.blinds_list) != 1:
             self.blinds_list.pop(0)
         bb = players[-1]
         sb = players[-2]
@@ -337,9 +332,16 @@ class StandardBoard(list):
                     player.winner = True
 
         for player in players:
-            if player.winner == True:
+            if player.winner == True and comb_list.count(winner_combination) == 1:
                 player.chip_amount += self.bank
                 print(player, "wins {0} chips!".format(self.bank))
-                self.bank = 0
-                self.game_round += 1
                 return True
+
+            elif player.winner == True and comb_list.count(winner_combination) > 1:
+                player.chip_amount += self.bank//len([player for player in players if player.winner])
+                print("Bank:", self.bank)
+                print(player, "won", self.bank//len([player for player in players if player.winner]))
+                #print("Bank {0} will be split between {1} players".format(self.bank,len([player for player in players if player.winner])))
+
+
+        self.game_round += 1
