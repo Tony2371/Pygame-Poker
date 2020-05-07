@@ -18,8 +18,8 @@ class Card(object):
 class StandardDeck(list):
     def __init__(self):
         self.shuffled = False
-        suits = ["\u2660", "\u2665", "\u2666", "\u2663"]
-        #suits = ["c","d","h","s"]
+        #suits = ["\u2660", "\u2665", "\u2666", "\u2663"]
+        suits = ["c","d","h","s"]
         values = {
         	    "Two":2,
         	    "Three":3,
@@ -162,28 +162,31 @@ class Player(object):
 
             #9 - Straight flush
         if self.straight_flush_eval(self.val_list, self.suit_list) == 5:
-            self.combination[0] = 9
-            self.combination[1] = self.straight_eval(self.val_list)
+            self.combination = [9,self.straight_eval(self.val_list),0,0,0,0]
 
             #9.1 - Low straight flush
         elif self.low_straight_flush_eval(self.val_list, self.suit_list) == 5:
-            self.combination[0] = 9
-            self.combination[1] = 5
+            self.combination = [9,5,0,0,0,0]
 
             #8 - Four of a kind
         elif 4 in self.count_list:
-            self.combination[0] = 8
-            self.combination[1] = self.val_list[self.count_list.index(4)]
+            self.combination = [8,self.val_list[self.count_list.index(4)],0,0,0,0]
 
             #7 - Full House
         elif self.count_list.count(3) == 6: # this handles two "three of a kind" problem
             self.combination[0] = 7
             self.combination[1] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 3])[-1]
             self.combination[2] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 3])[-4]
+            self.combination[3] = 0
+            self.combination[4] = 0
+            self.combination[5] = 0
         elif 3 in self.count_list and 2 in self.count_list:
             self.combination[0] = 7
             self.combination[1] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 3])[-1]
             self.combination[2] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 2])[0]
+            self.combination[3] = 0
+            self.combination[4] = 0
+            self.combination[5] = 0
 
             #6 - Flush
         elif 5 in [self.suit_list.count(x) for x in self.suit_list] or 6 in [self.suit_list.count(x) for x in self.suit_list] or 7 in [self.suit_list.count(x) for x in self.suit_list]:
@@ -196,13 +199,11 @@ class Player(object):
 
             #5 - Straight
         elif self.straight_eval(self.val_list) != 0:
-            self.combination[0] = 5
-            self.combination[1] = self.straight_eval(self.val_list)
+            self.combination = [5,self.straight_eval(self.val_list),0,0,0,0]
 
             #5.1 - Low Straight
         elif sum([1 for x in set(self.val_list) if x in [2,3,4,5,14]]) == 5:
-            self.combination[0] = 5
-            self.combination[1] = 5
+            self.combination = [5,5,0,0,0,0]
 
             #4 - Three of a kind (Set)
         elif 3 in self.count_list:
@@ -210,6 +211,8 @@ class Player(object):
             self.combination[1] = self.val_list[self.count_list.index(3)]
             self.combination[2] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-1]
             self.combination[3] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-2]
+            self.combination[4] = 0
+            self.combination[5] = 0
 
             #3 - Two Pairs
         elif self.count_list.count(2) == 6: # this handles three "Pairs" problem
@@ -217,11 +220,15 @@ class Player(object):
             self.combination[1] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 2])[-1]
             self.combination[2] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 2])[-3]
             self.combination[3] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 2])[-5]
+            self.combination[4] = 0
+            self.combination[5] = 0
         elif self.count_list.count(2) == 4:
             self.combination[0] = 3
             self.combination[1] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 2])[-1]
             self.combination[2] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 2])[-3]
             self.combination[3] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-1]
+            self.combination[4] = 0
+            self.combination[5] = 0
 
             #2 - One Pair
         elif len(self.val_list) != len(set(self.val_list)):
@@ -230,6 +237,7 @@ class Player(object):
             self.combination[2] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-1]
             self.combination[3] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-2]
             self.combination[4] = sorted([x for x,y in zip(self.val_list,self.count_list) if y == 1])[-3]
+            self.combination[5] = 0
 
             #1 - High Card
         else:
@@ -246,14 +254,12 @@ class Player(object):
             bet_amount = self.chip_amount
         self.chip_amount -= bet_amount
         self.current_bet += bet_amount
-        board.bank += bet_amount
+        board.pot += bet_amount
 
-    # input is a number where:
-    # N = (max(all current bets)-you.current bet)
+    # input numbers where:
     # 0 - fold
-    # 1 - bet 0 (check)
-    # 2 - bet N (call)
-    # 3 - bet > N (raise)
+    # 1 - call/check
+    # 2 - raise
     def decision(self,action,players,board):
         if action == "fold":
             self.hand = None
@@ -283,12 +289,12 @@ class Player(object):
 
 class StandardBoard(list):
     def __init__(self):
-        self.bank = 0
+        self.pot = 0
         self.game_round = 0
         self.blinds_list = [20,50,100,200,400,800,1600]
 
     def reset(self):
-        self.bank = 0
+        self.pot = 0
         self.clear()
 
     def blind_bet(self, players):
@@ -333,15 +339,12 @@ class StandardBoard(list):
 
         for player in players:
             if player.winner == True and comb_list.count(winner_combination) == 1:
-                player.chip_amount += self.bank
-                print(player, "wins {0} chips!".format(self.bank))
+                player.chip_amount += self.pot
+                print(player, "wins {0} chips!".format(self.pot))
                 return True
 
             elif player.winner == True and comb_list.count(winner_combination) > 1:
-                player.chip_amount += self.bank//len([player for player in players if player.winner])
-                print("Bank:", self.bank)
-                print(player, "won", self.bank//len([player for player in players if player.winner]))
-                #print("Bank {0} will be split between {1} players".format(self.bank,len([player for player in players if player.winner])))
-
+                player.chip_amount += self.pot//len([player for player in players if player.winner])
+                print("pot {0} will be split between {1} players".format(self.pot,len([player for player in players if player.winner])))
 
         self.game_round += 1
