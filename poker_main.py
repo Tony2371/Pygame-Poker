@@ -1,4 +1,5 @@
 from random import shuffle
+from random import choice
 
 class Card(object):
     def __init__(self, name, value, suit):
@@ -262,19 +263,24 @@ class Player(object):
     # 2 - raise
     def decision(self,action,players,board):
         if action == "fold":
-            self.hand = None
+            self.hand = []
             self.ingame = False
+            self.current_bet = 0
             print(self,"folded")
         elif action == "call":
             print(self,"calls for {0} chips".format(max(x.current_bet for x in players)-self.current_bet))
             self.bet(max(x.current_bet for x in players)-self.current_bet,board)
             self.answered = True
         elif "raise" in action:
-            raise_amount = int(action.split("raise")[-1])
+            if int(action.split("raise")[-1]) < self.chip_amount:
+                raise_amount = int(action.split("raise")[-1])
+            else:
+                 raise_amount = self.chip_amount
             self.bet(raise_amount,board)
             print(self,"raises for {0} chips".format(raise_amount))
             for player in players:
-                player.answered = False
+                if player.chip_amount > 0:
+                    player.answered = False
             self.answered = True
         else:
             print("Enter valid action!")
@@ -305,15 +311,15 @@ class StandardBoard(list):
         bb.bet(self.blinds_list[0],self)
         sb.bet(self.blinds_list[0]//2,self)
 
-    def check_bets(self, players):
+    def check_bets(self, players,board):
         while True:
             for player in players:
                 if len(self) > 1 and player.ingame:
                     player.evaluate(self)
                 if player.ingame and not player.answered:
                     player.print_player_status()
-                    #player.decision(input("{0}'s decision:".format(player)), players, board)
-                    player.decision("call", players, self)
+                    player.decision(input("{0}'s decision:".format(player)), players, board)
+                    #player.decision(choice(["call","fold"]), players, self)
             if all([player.answered for player in players if player.ingame]):
                 break
         print("Bets done!!!")
@@ -324,14 +330,15 @@ class StandardBoard(list):
 
     def check_winner(self, players):
         status_list = [player.ingame for player in players]
+        comb_list = [player.combination for player in players]
+        winner_combination = sorted(comb_list)[-1]
+
         if status_list.count(True) == 1:
             for player, status in zip(players, status_list):
                 if status:
                     player.winner = True
 
         if len(self) == 5:
-            comb_list = [player.combination for player in players]
-            winner_combination = sorted(comb_list)[-1]
             for player in players:
                 if player.combination == winner_combination:
                     print(player, "is the winner!!!")

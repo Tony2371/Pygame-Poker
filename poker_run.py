@@ -1,15 +1,14 @@
 '''
 TO DO LIST:
-- Raise is possbile for minimum amount equal to blind
-- Bank split situation
-- All-in bank split
+- Raise is possible for minimum amount equal to blind
+- Side pots mechanic
 
 KNOWN BUGS:
-- no bugs known for now
+- No bugs known for now
 
 SMALL ISSUES:
 - Four of a kind doesnt have kicker because it doesnt need
-- If (probably not only) "straight", combination shows kickers
+- Small chip loss due to rounding in case of pot split
 '''
 
 from poker_main import Player, StandardDeck, StandardBoard
@@ -42,9 +41,9 @@ while running:
 		player.hand.append(deck.pop(0))
 		player.hand.append(deck.pop(0))
 
-	board.check_bets(players_in_game)
+	board.check_bets(players_in_game,board)
 	if board.check_winner(players_in_game):
-		break
+		continue
 	print("Preflop ended!")
 
 	# --------------------------FLOP-----------------------------------
@@ -54,7 +53,7 @@ while running:
 
 	print("Board: ",board)
 
-	board.check_bets(players_in_game)
+	board.check_bets(players_in_game,board)
 	board.check_winner(players_in_game)
 	print("Flop ended!")
 
@@ -62,7 +61,7 @@ while running:
 	board.append(deck.pop(0))
 	print("Board: ",board)
 
-	board.check_bets(players_in_game)
+	board.check_bets(players_in_game,board)
 	board.check_winner(players_in_game)
 	print("Turn ended!")
 
@@ -70,14 +69,13 @@ while running:
 	board.append(deck.pop(0))
 	print("Board: ",board)
 
-	board.check_bets(players_in_game)
+	board.check_bets(players_in_game,board)
 	board.check_winner(players_in_game)
 	print("River ended!")
 
+	# --------------------------POSTGAME-----------------------------------
 	print("########################################")
 	print("Round:",board.game_round)
-	print("Blinds:",board.blinds_list[0],board.blinds_list[0]//2)
-	print("Blinds:",)
 	print(board)
 	for player in players_in_game:
 		print(player,"|",player.chip_amount,"|",player.hand,"|",player.combination)
@@ -86,8 +84,6 @@ while running:
 		if player.chip_amount <= 0:
 			players_in_game.remove(player)
 			print(player, "eliminated!")
-
-	#xyz = input("Continue")
 
 	if len(players_in_game) == 1:
 		print(players_in_game[0], "won 'em all!")
