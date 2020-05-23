@@ -298,8 +298,10 @@ class StandardBoard(list):
         self.pot = 0
         self.game_round = 0
         self.blinds_list = [20,50,100,200,400,800,1600]
+        self.paid_out = False
 
     def reset(self):
+        self.paid_out = False
         self.pot = 0
         self.clear()
 
@@ -316,11 +318,11 @@ class StandardBoard(list):
             for player in players:
                 if len(self) > 1 and player.ingame:
                     player.evaluate(self)
-                if player.ingame and not player.answered:
+                if player.ingame and not player.answered and len([player.ingame for player in players if player.ingame]) != 1:
                     player.print_player_status()
-                    player.decision(input("{0}'s decision:".format(player)), players, board)
-                    #player.decision(choice(["call","fold"]), players, self)
-            if all([player.answered for player in players if player.ingame]):
+                    #player.decision(input("{0}'s decision:".format(player)), players, board)
+                    player.decision(choice(["call","fold","raise100"]), players, self)
+            if all([player.answered for player in players if player.ingame]) or len([player.ingame for player in players if player.ingame]) == 1:
                 break
         print("Bets done!!!")
 
@@ -338,20 +340,22 @@ class StandardBoard(list):
                 if status:
                     player.winner = True
 
-        if len(self) == 5:
+        # checks winner in showdown stage
+        if len(self) == 5: #this assigns winner status for all players with highest combination
             for player in players:
-                if player.combination == winner_combination:
+                if player.combination == winner_combination and player.ingame:
                     print(player, "is the winner!!!")
                     player.winner = True
 
         for player in players:
-            if player.winner == True and comb_list.count(winner_combination) == 1:
+            if player.winner == True and comb_list.count(winner_combination) == 1 and not self.paid_out:
                 player.chip_amount += self.pot
+                self.paid_out = True
                 print(player, "wins {0} chips!".format(self.pot))
-                return True
 
-            elif player.winner == True and comb_list.count(winner_combination) > 1:
+            elif player.winner == True and comb_list.count(winner_combination) > 1 and len([player.ingame for player in players if player.ingame]) != 1:
                 player.chip_amount += self.pot//len([player for player in players if player.winner])
+                self.paid_out = True
                 print("pot {0} will be split between {1} players".format(self.pot,len([player for player in players if player.winner])))
 
         self.game_round += 1
