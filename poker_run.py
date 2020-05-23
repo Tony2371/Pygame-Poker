@@ -1,10 +1,10 @@
 '''
 TO DO LIST:
-- Raise is possible for minimum amount equal to blind
 - Side pots mechanic
 
 KNOWN BUGS:
-- No bugs known for now
+- Reraise doesnt work
+- Round counter is in wrong function
 
 SMALL ISSUES:
 - Four of a kind doesnt have kicker because it doesnt need
@@ -42,8 +42,7 @@ while running:
 		player.hand.append(deck.pop(0))
 
 	board.check_bets(players_in_game,board)
-	if board.check_winner(players_in_game):
-		continue
+	board.check_winner(players_in_game)
 	print("Preflop ended!")
 
 	# --------------------------FLOP-----------------------------------
@@ -79,6 +78,10 @@ while running:
 	print(board)
 	for player in players_in_game:
 		print(player,"|",player.chip_amount,"|",player.hand,"|",player.combination)
+
+	if sum([player.chip_amount for player in players_in_game]) < 6000:
+		print("ERROR!!!")
+		running = False
 
 	for player in players_in_game:
 		if player.chip_amount <= 0:
