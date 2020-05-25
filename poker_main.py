@@ -272,10 +272,10 @@ class Player(object):
             self.bet(max(x.current_bet for x in players)-self.current_bet,board)
             self.answered = True
         elif "raise" in action:
-            if int(action.split("raise")[-1]) < self.chip_amount:
-                raise_amount = int(action.split("raise")[-1])
+            if max([player.current_bet for player in players])+int(action.split("raise")[-1]) < self.chip_amount:
+                raise_amount = max([player.current_bet for player in players])*2+int(action.split("raise")[-1])
             else:
-                 raise_amount = self.chip_amount
+                raise_amount = self.chip_amount
             self.bet(raise_amount,board)
             print(self,"raises for {0} chips".format(raise_amount))
             for player in players:
@@ -321,7 +321,7 @@ class StandardBoard(list):
                 if player.ingame and not player.answered and len([player.ingame for player in players if player.ingame]) != 1:
                     player.print_player_status()
                     #player.decision(input("{0}'s decision:".format(player)), players, board)
-                    player.decision(choice(["call","fold","raise100"]), players, self)
+                    player.decision(choice(["call","fold","raise50"]), players, self)
             if all([player.answered for player in players if player.ingame]) or len([player.ingame for player in players if player.ingame]) == 1:
                 break
         print("Bets done!!!")
@@ -332,23 +332,23 @@ class StandardBoard(list):
 
     def check_winner(self, players):
         status_list = [player.ingame for player in players]
-        comb_list = [player.combination for player in players]
+        comb_list = [player.combination for player in players if player.ingame]
         winner_combination = sorted(comb_list)[-1]
 
-        if status_list.count(True) == 1:
-            for player, status in zip(players, status_list):
-                if status:
+        if status_list.count(True) == 1: # assigns winner status for last remaining player
+            for player in players:
+                if player.ingame:
                     player.winner = True
 
         # checks winner in showdown stage
-        if len(self) == 5: #this assigns winner status for all players with highest combination
+        if len(self) == 5: #assigns winner status for all players with highest combination
             for player in players:
                 if player.combination == winner_combination and player.ingame:
                     print(player, "is the winner!!!")
                     player.winner = True
 
         for player in players:
-            if player.winner == True and comb_list.count(winner_combination) == 1 and not self.paid_out:
+            if player.winner == True and not self.paid_out:
                 player.chip_amount += self.pot
                 self.paid_out = True
                 print(player, "wins {0} chips!".format(self.pot))

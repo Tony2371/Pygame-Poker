@@ -3,8 +3,8 @@ TO DO LIST:
 - Side pots mechanic
 
 KNOWN BUGS:
-- Reraise doesnt work
 - Round counter is in wrong function
+- All-in player is asked for action
 
 SMALL ISSUES:
 - Four of a kind doesnt have kicker because it doesnt need
@@ -24,6 +24,7 @@ player_5 = Player("Five")
 player_6 = Player("Six")
 
 players_in_game = [player_1,player_2,player_3,player_4,player_5,player_6]
+#players_in_game = [player_1,player_2]
 running = True
 
 while running:
@@ -76,6 +77,7 @@ while running:
 	print("########################################")
 	print("Round:",board.game_round)
 	print(board)
+	print("BB:",board.blinds_list[0])
 	for player in players_in_game:
 		print(player,"|",player.chip_amount,"|",player.hand,"|",player.combination)
 
