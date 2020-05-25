@@ -3,8 +3,7 @@ TO DO LIST:
 - Side pots mechanic
 
 KNOWN BUGS:
-- Round counter is in wrong function
-- All-in player is asked for action
+- Fixed all bugs for now
 
 SMALL ISSUES:
 - Four of a kind doesnt have kicker because it doesnt need
@@ -22,9 +21,12 @@ player_3 = Player("Three")
 player_4 = Player("Four")
 player_5 = Player("Five")
 player_6 = Player("Six")
+player_7 = Player("Seven")
+player_8 = Player("Eight")
+player_9 = Player("Nine")
 
+#players_in_game = [player_1,player_2,player_3,player_4,player_5,player_6,player_7,player_8,player_9]
 players_in_game = [player_1,player_2,player_3,player_4,player_5,player_6]
-#players_in_game = [player_1,player_2]
 running = True
 
 while running:
@@ -72,7 +74,7 @@ while running:
 	board.check_bets(players_in_game,board)
 	board.check_winner(players_in_game)
 	print("River ended!")
-
+	board.game_round += 1
 	# --------------------------POSTGAME-----------------------------------
 	print("########################################")
 	print("Round:",board.game_round)
@@ -81,7 +83,7 @@ while running:
 	for player in players_in_game:
 		print(player,"|",player.chip_amount,"|",player.hand,"|",player.combination)
 
-	if sum([player.chip_amount for player in players_in_game]) < 6000:
+	if sum([player.chip_amount for player in players_in_game]) != 1500*6:
 		print("ERROR!!!")
 		running = False
 

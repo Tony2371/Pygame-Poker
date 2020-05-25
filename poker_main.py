@@ -60,7 +60,7 @@ class Player(object):
         self.suit_list = []
 
         self.ingame = True
-        self.chip_amount = 1000
+        self.chip_amount = 1500
         self.current_bet = 0
         self.answered = False
         self.winner = False
@@ -272,8 +272,8 @@ class Player(object):
             self.bet(max(x.current_bet for x in players)-self.current_bet,board)
             self.answered = True
         elif "raise" in action:
-            if max([player.current_bet for player in players])+int(action.split("raise")[-1]) < self.chip_amount:
-                raise_amount = max([player.current_bet for player in players])*2+int(action.split("raise")[-1])
+            if max([player.current_bet for player in players])*2 < self.chip_amount:
+                raise_amount = max([player.current_bet for player in players])*2-self.current_bet
             else:
                 raise_amount = self.chip_amount
             self.bet(raise_amount,board)
@@ -285,12 +285,21 @@ class Player(object):
         else:
             print("Enter valid action!")
 
+        if self.chip_amount == 0:
+            print(self.name,"is all-in")
+            self.answered = True
+
+        if not self.answered and any([True for player in players if player.chip_amount == 0 and player.ingame]):
+            self.answered = True
+
     def print_player_status(self):
+        print("--------------------")
         print("--------------------")
         print(self.name,":",self.hand)
         print(self.chip_amount)
         print(self.current_bet)
         print(self.comb_names[self.combination[0]],"of",self.combination[1])
+        print("--------------------")
         print("--------------------")
 
 class StandardBoard(list):
@@ -321,14 +330,22 @@ class StandardBoard(list):
                 if player.ingame and not player.answered and len([player.ingame for player in players if player.ingame]) != 1:
                     player.print_player_status()
                     #player.decision(input("{0}'s decision:".format(player)), players, board)
-                    player.decision(choice(["call","fold","raise50"]), players, self)
+                    player.decision(choice(["call","fold","raise"]), players, self)
             if all([player.answered for player in players if player.ingame]) or len([player.ingame for player in players if player.ingame]) == 1:
                 break
         print("Bets done!!!")
 
-        for player in players:
-            player.answered = False
+        for player in players: #resets bets and decisions before next game street
             player.current_bet = 0
+            if player.chip_amount > 0:
+                player.answered = False
+
+        #disables actions for all-in player's opponent
+        all_in_list = [1 if player.chip_amount > 0 else 0 for player in players if player.ingame]
+        if all_in_list.count(1) == 1:
+            for player,all_in_status in zip([player for player in players if player.ingame],all_in_list):
+                if all_in_status == 1:
+                    player.answered = True
 
     def check_winner(self, players):
         status_list = [player.ingame for player in players]
@@ -348,7 +365,7 @@ class StandardBoard(list):
                     player.winner = True
 
         for player in players:
-            if player.winner == True and not self.paid_out:
+            if player.winner == True and not self.paid_out and comb_list.count(winner_combination) == 1:
                 player.chip_amount += self.pot
                 self.paid_out = True
                 print(player, "wins {0} chips!".format(self.pot))
@@ -357,5 +374,3 @@ class StandardBoard(list):
                 player.chip_amount += self.pot//len([player for player in players if player.winner])
                 self.paid_out = True
                 print("pot {0} will be split between {1} players".format(self.pot,len([player for player in players if player.winner])))
-
-        self.game_round += 1
