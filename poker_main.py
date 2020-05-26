@@ -97,19 +97,19 @@ class Player(object):
     def straight_eval(self,input_list):
         card_list = sorted(input_list)
         if len(card_list) == 7:
-            if card_list[4] == card_list[3]+1 and card_list[3] == card_list[2]+1 and card_list[2] == card_list[1]+1 and card_list[1] == card_list[0]+1:
-                return card_list[4]
+            if card_list[6] == card_list[5]+1 and card_list[5] == card_list[4]+1 and card_list[4] == card_list[3]+1 and card_list[3] == card_list[2]+1:
+                return card_list[6]
             elif card_list[5] == card_list[4]+1 and card_list[4] == card_list[3]+1 and card_list[3] == card_list[2]+1 and card_list[2] == card_list[1]+1:
                 return card_list[5]
-            elif card_list[6] == card_list[5]+1 and card_list[5] == card_list[4]+1 and card_list[4] == card_list[3]+1 and card_list[3] == card_list[2]+1:
-                return card_list[6]
+            elif card_list[4] == card_list[3]+1 and card_list[3] == card_list[2]+1 and card_list[2] == card_list[1]+1 and card_list[1] == card_list[0]+1:
+                return card_list[4]
             else:
                 return 0
         elif len(card_list) == 6:
-            if card_list[4] == card_list[3]+1 and card_list[3] == card_list[2]+1 and card_list[2] == card_list[1]+1 and card_list[1] == card_list[0]+1:
-                return card_list[4]
-            elif card_list[5] == card_list[4]+1 and card_list[4] == card_list[3]+1 and card_list[3] == card_list[2]+1 and card_list[2] == card_list[1]+1:
+            if card_list[5] == card_list[4]+1 and card_list[4] == card_list[3]+1 and card_list[3] == card_list[2]+1 and card_list[2] == card_list[1]+1:
                 return card_list[5]
+            elif card_list[4] == card_list[3]+1 and card_list[3] == card_list[2]+1 and card_list[2] == card_list[1]+1 and card_list[1] == card_list[0]+1:
+                return card_list[4]
             else:
                 return 0
         elif len(card_list) == 5:
@@ -272,12 +272,22 @@ class Player(object):
             self.bet(max(x.current_bet for x in players)-self.current_bet,board)
             self.answered = True
         elif "raise" in action:
-            if max([player.current_bet for player in players])*2 < self.chip_amount:
+            if all([True for player in players if player.current_bet == 0]):
+                if board.blinds_list[0] < self.chip_amount:
+                    self.bet(board.blinds_list[0],board)
+                    print(self,"bets {0} chips".format(board.blinds_list[0]))
+                else:
+                    self.bet(self.chip_amount,board)
+                    print(self,"bets {0} chips".format(self.chip_amount))
+
+            elif max([player.current_bet for player in players])*2 < self.chip_amount:
                 raise_amount = max([player.current_bet for player in players])*2-self.current_bet
+                self.bet(raise_amount,board)
+                print(self,"raises for {0} chips".format(raise_amount))
             else:
                 raise_amount = self.chip_amount
-            self.bet(raise_amount,board)
-            print(self,"raises for {0} chips".format(raise_amount))
+                self.bet(raise_amount,board)
+
             for player in players:
                 if player.chip_amount > 0:
                     player.answered = False
@@ -315,22 +325,22 @@ class StandardBoard(list):
         self.clear()
 
     def blind_bet(self, players):
-        if self.game_round % 10 == 0 and self.game_round != 0 and len(self.blinds_list) != 1:
+        if self.game_round % 20 == 0 and self.game_round != 0 and len(self.blinds_list) != 1:
             self.blinds_list.pop(0)
         bb = players[-1]
         sb = players[-2]
         bb.bet(self.blinds_list[0],self)
         sb.bet(self.blinds_list[0]//2,self)
 
-    def check_bets(self, players,board):
+    def check_bets(self,players,board):
         while True:
             for player in players:
                 if len(self) > 1 and player.ingame:
                     player.evaluate(self)
                 if player.ingame and not player.answered and len([player.ingame for player in players if player.ingame]) != 1:
                     player.print_player_status()
-                    #player.decision(input("{0}'s decision:".format(player)), players, board)
-                    player.decision(choice(["call","fold","raise"]), players, self)
+                    player.decision(input("{0}'s decision:".format(player)), players, board)
+                    #player.decision(choice(["call","raise","fold"]), players, self)
             if all([player.answered for player in players if player.ingame]) or len([player.ingame for player in players if player.ingame]) == 1:
                 break
         print("Bets done!!!")
